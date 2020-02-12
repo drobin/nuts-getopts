@@ -22,5 +22,20 @@
 # SOFTWARE.
 ##
 
-add_subdirectory(getopts)
-add_subdirectory(getopts-tool)
+set(PUBLIC_HEADER nuts-getopts.h)
+
+add_library(nuts-getopts STATIC
+  ${PUBLIC_HEADER}
+  getopts.c
+)
+
+include_directories(
+  ${PROJECT_SOURCE_DIR}/src
+)
+
+install(
+  TARGETS nuts-getopts
+  LIBRARY DESTINATION lib
+)
+
+install(FILES "${PUBLIC_HEADER}" DESTINATION include)
