@@ -1,7 +1,7 @@
 ##
 # MIT License
 #
-# Copyright (c) 2020 Robin Doer
+# Copyright (c) 2019, 2020 Robin Doer
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -22,19 +22,18 @@
 # SOFTWARE.
 ##
 
-cmake_minimum_required(VERSION 2.8.11)
-project(nutstools C)
+find_package(Doxygen REQUIRED)
 
-if (NOT CMAKE_BUILD_TYPE)
-  set(CMAKE_BUILD_TYPE Release)
-endif(NOT CMAKE_BUILD_TYPE)
+# set input and output files
+set(DOXYGEN_IN ${PROJECT_SOURCE_DIR}/docs/Doxyfile.in)
+set(DOXYGEN_OUT ${PROJECT_BINARY_DIR}/Doxyfile)
 
-message(STATUS "building nutstools (${CMAKE_BUILD_TYPE}) with cmake ${CMAKE_VERSION}")
-message(STATUS "install to ${CMAKE_INSTALL_PREFIX}")
+# request to configure the file
+configure_file(${DOXYGEN_IN} ${DOXYGEN_OUT} @ONLY)
 
-set(CMAKE_C_FLAGS "-std=c99 -Wall -Werror -pedantic-errors")
-set(CMAKE_C_FLAGS_DEBUG "-g -O0 -DENABLE_DEBUG")
-
-include("${PROJECT_SOURCE_DIR}/cmake/doxygen.cmake")
-
-add_subdirectory(src)
+add_custom_target(doxygen
+  COMMAND ${DOXYGEN_EXECUTABLE} ${DOXYGEN_OUT}
+  WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
+  COMMENT "Generating API documentation with Doxygen"
+  VERBATIM
+)
