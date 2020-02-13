@@ -69,14 +69,15 @@ static const struct nuts_getopts_event* event_find_tool(const nuts_getopts_tool*
   return NULL;
 }
 
-static const struct nuts_getopts_event* event_find_option(const nuts_getopts_tool* tool, char sname, const char* lname) {
+static const struct nuts_getopts_event* event_find_option(const nuts_getopts_tool* tool, const char* name) {
+  const size_t len = (name != NULL) ? strlen(name) : 0;
+
   for (int i = 0; i < tool->nevents; i++) {
     if (tool->events[i].type == nuts_getopts_option_event) {
       const struct nuts_getopts_option* option = tool->events[i].u.opt.option;
 
-      if (sname != 0 && option->sname == sname)
-        return &tool->events[i];
-      if (lname != NULL && strcmp(option->lname, lname) == 0)
+      if ((len == 1 && option->sname == name[0]) ||
+          (len > 1 && strncmp(option->lname, name, len) == 0))
         return &tool->events[i];
     }
   }
@@ -204,36 +205,22 @@ const char* nuts_getopts_tool_argument(const nuts_getopts_tool* tool, int idx) {
     return NULL;
 }
 
-const char* nuts_getopts_tool_get_by_sname(const nuts_getopts_tool* tool, char sname) {
-  if (tool != NULL && sname != 0) {
-    const struct nuts_getopts_event* ev = event_find_option(tool, sname, NULL);
-    return (ev != NULL) ? ev->u.opt.value : NULL;
-  } else
-    return NULL;
+const char* nuts_getopts_tool_value(const nuts_getopts_tool* tool, const char* name) {
+  const struct nuts_getopts_event* ev = NULL;
+
+  if (tool != NULL && name != NULL)
+    ev = event_find_option(tool, name);
+
+  return (ev != NULL) ? ev->u.opt.value : NULL;
 }
 
-const char* nuts_getopts_tool_get_by_lname(const nuts_getopts_tool* tool, const char* lname) {
-  if (tool != NULL && lname != NULL) {
-    const struct nuts_getopts_event* ev = event_find_option(tool, 0, lname);
-    return (ev != NULL) ? ev->u.opt.value : NULL;
-  } else
-    return NULL;
-}
+int nuts_getopts_tool_is_set(const nuts_getopts_tool* tool, const char* name) {
+  const struct nuts_getopts_event* ev = NULL;
 
-int nuts_getopts_tool_is_set_by_sname(const nuts_getopts_tool* tool, char sname) {
-  if (tool != NULL && sname != 0) {
-    const struct nuts_getopts_event* ev = event_find_option(tool, sname, NULL);
-    return (ev != NULL);
-  } else
-    return 0;
-}
+  if (tool != NULL && name != NULL)
+    ev = event_find_option(tool, name);
 
-int nuts_getopts_tool_is_set_by_lname(const nuts_getopts_tool* tool, const char* lname) {
-  if (tool != NULL && lname != NULL) {
-    const struct nuts_getopts_event* ev = event_find_option(tool, 0, lname);
-    return (ev != NULL);
-  } else
-    return 0;
+  return (ev != NULL);
 }
 
 int nuts_getopts_tool_run(nuts_getopts_tool* tool, int argc, char* argv[]) {

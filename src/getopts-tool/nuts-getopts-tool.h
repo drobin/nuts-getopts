@@ -29,6 +29,8 @@
 extern "C" {
 #endif
 
+/**@file nuts-getopts-tool.h */
+
 typedef struct nuts_getopts_tool_s nuts_getopts_tool;
 typedef struct nuts_getopts_cmdlet_s nuts_getopts_cmdlet;
 typedef int (*nuts_getopts_cmdlet_func)(nuts_getopts_tool* tool);
@@ -41,10 +43,8 @@ nuts_getopts_cmdlet* nuts_getopts_tool_root_cmdlet(const nuts_getopts_tool* tool
 void nuts_getopts_tool_enable_help(nuts_getopts_tool* tool);
 const char* nuts_getopts_tool_name(const nuts_getopts_tool* tool);
 const char* nuts_getopts_tool_argument(const nuts_getopts_tool* tool, int idx);
-const char* nuts_getopts_tool_get_by_sname(const nuts_getopts_tool* tool, char sname);
-const char* nuts_getopts_tool_get_by_lname(const nuts_getopts_tool* tool, const char* lname);
-int nuts_getopts_tool_is_set_by_sname(const nuts_getopts_tool* tool, char sname);
-int nuts_getopts_tool_is_set_by_lname(const nuts_getopts_tool* tool, const char* lname);
+const char* nuts_getopts_tool_value(const nuts_getopts_tool* tool, const char* name);
+int nuts_getopts_tool_is_set(const nuts_getopts_tool* tool, const char* name);
 
 int nuts_getopts_tool_run(nuts_getopts_tool* tool, int argc, char* argv[]);
 
