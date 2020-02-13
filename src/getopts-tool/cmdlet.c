@@ -129,7 +129,7 @@ int nuts_getopts_cmdlet_set_ldescr(nuts_getopts_cmdlet* cmdlet, const char* ldes
   return _eval_update_attr(cmdlet, ldescr, ldescr);
 }
 
-int nuts_getopts_cmdlet_add_option(nuts_getopts_cmdlet* cmdlet, const char* lname, char sname, nuts_getopts_argument_type arg, const char* descr) {
+int nuts_getopts_cmdlet_add_option(nuts_getopts_cmdlet* cmdlet, const char* lname, char sname, int arg, const char* descr) {
   if (cmdlet == NULL || (lname == NULL && sname == 0))
     return -1;
 

@@ -27,7 +27,7 @@
 
 #include "internal.h"
 
-static int option_add(struct nuts_getopts_cmdlet_options* options, const char* lname, char sname, nuts_getopts_argument_type arg) {
+static int option_add(struct nuts_getopts_cmdlet_options* options, const char* lname, char sname, int /*nuts_getopts_argument_type*/ arg) {
   const int n = options->nopts + 2;
   struct nuts_getopts_option* opts = realloc(options->opts, n * sizeof(struct nuts_getopts_option));
   char* opts_lname = (lname != NULL) ? malloc(strlen(lname) + 1) : NULL;
@@ -40,7 +40,7 @@ static int option_add(struct nuts_getopts_cmdlet_options* options, const char* l
 
   opts[n - 2].sname = sname;
   opts[n - 2].lname = (lname != NULL) ? strcpy(opts_lname, lname) : NULL;
-  opts[n - 2].arg = arg;
+  opts[n - 2].arg = arg ? nuts_getopts_required_argument : nuts_getopts_no_argument;
   memset(&opts[n - 1], 0, sizeof(struct nuts_getopts_option));
 
   options->opts = opts;
@@ -65,7 +65,7 @@ static int descr_add(struct nuts_getopts_cmdlet_options* options, const char* de
   return 0;
 }
 
-int nuts_getopts_cmdlet_options_add(struct nuts_getopts_cmdlet_options* options, const char* lname, char sname, nuts_getopts_argument_type arg, const char* descr) {
+int nuts_getopts_cmdlet_options_add(struct nuts_getopts_cmdlet_options* options, const char* lname, char sname, int arg, const char* descr) {
   if (options == NULL || (lname == NULL && sname == 0))
     return -1;
 

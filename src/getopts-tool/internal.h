@@ -25,6 +25,8 @@
 #ifndef NUTS_GETOPTS_TOOL_INTERNAL_H
 #define NUTS_GETOPTS_TOOL_INTERNAL_H
 
+#include <nuts-getopts.h>
+
 #include "nuts-getopts-tool.h"
 
 struct nuts_getopts_cmdlet_head {
@@ -57,7 +59,7 @@ struct nuts_getopts_tool_s {
   int nevents;
 };
 
-int nuts_getopts_cmdlet_options_add(struct nuts_getopts_cmdlet_options* options, const char* lname, char sname, nuts_getopts_argument_type arg, const char* descr);
+int nuts_getopts_cmdlet_options_add(struct nuts_getopts_cmdlet_options* options, const char* lname, char sname, int arg, const char* descr);
 void nuts_getopts_cmdlet_options_release(struct nuts_getopts_cmdlet_options* options);
 
 nuts_getopts_cmdlet* nuts_getopts_cmdlet_new_standalone(const nuts_getopts_cmdlet* parent, const char* action);

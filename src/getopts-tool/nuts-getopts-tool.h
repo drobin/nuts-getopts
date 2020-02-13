@@ -29,8 +29,6 @@
 extern "C" {
 #endif
 
-#include <nuts-getopts.h>
-
 typedef struct nuts_getopts_tool_s nuts_getopts_tool;
 typedef struct nuts_getopts_cmdlet_s nuts_getopts_cmdlet;
 typedef int (*nuts_getopts_cmdlet_func)(nuts_getopts_tool* tool);
@@ -54,7 +52,7 @@ nuts_getopts_cmdlet* nuts_getopts_cmdlet_new(nuts_getopts_cmdlet* cmdlet, const 
 int nuts_getopts_cmdlet_set_syntax(nuts_getopts_cmdlet* cmdlet, const char* syntax);
 int nuts_getopts_cmdlet_set_sdescr(nuts_getopts_cmdlet* cmdlet, const char* sdescr);
 int nuts_getopts_cmdlet_set_ldescr(nuts_getopts_cmdlet* cmdlet, const char* ldescr);
-int nuts_getopts_cmdlet_add_option(nuts_getopts_cmdlet* cmdlet, const char* lname, char sname, nuts_getopts_argument_type arg, const char* descr);
+int nuts_getopts_cmdlet_add_option(nuts_getopts_cmdlet* cmdlet, const char* lname, char sname, int arg, const char* descr);
 void nuts_getopts_cmdlet_assign_func(nuts_getopts_cmdlet* cmdlet, nuts_getopts_cmdlet_func func);
 
 #ifdef __cplusplus
