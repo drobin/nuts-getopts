@@ -23,13 +23,13 @@
 ##
 
 cmake_minimum_required(VERSION 2.8.11)
-project(nutstools C)
+project(nuts-getopts C)
 
 if (NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE Release)
 endif(NOT CMAKE_BUILD_TYPE)
 
-message(STATUS "building nutstools (${CMAKE_BUILD_TYPE}) with cmake ${CMAKE_VERSION}")
+message(STATUS "building nuts-getopts (${CMAKE_BUILD_TYPE}) with cmake ${CMAKE_VERSION}")
 message(STATUS "install to ${CMAKE_INSTALL_PREFIX}")
 
 set(CMAKE_C_FLAGS "-std=c99 -Wall -Werror -pedantic-errors")
