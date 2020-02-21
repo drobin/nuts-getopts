@@ -27,7 +27,7 @@
 
 #include "internal.h"
 
-static int option_add(struct nuts_getopts_cmdlet_options* options, const char* lname, char sname, int /*nuts_getopts_argument_type*/ arg) {
+static int option_add(struct nuts_getopts_cmdlet_option_list* options, const char* lname, char sname, int /*nuts_getopts_argument_type*/ arg) {
   const int n = options->nopts + 2;
   struct nuts_getopts_option* opts = realloc(options->opts, n * sizeof(struct nuts_getopts_option));
   char* opts_lname = (lname != NULL) ? malloc(strlen(lname) + 1) : NULL;
@@ -48,7 +48,7 @@ static int option_add(struct nuts_getopts_cmdlet_options* options, const char* l
   return 0;
 }
 
-static int descr_add(struct nuts_getopts_cmdlet_options* options, const char* descr) {
+static int descr_add(struct nuts_getopts_cmdlet_option_list* options, const char* descr) {
   const int n = options->nopts + 1;
   char** new_arr = realloc(options->descr, n * sizeof(char**));
   char* new_descr = (descr != NULL) ? malloc(strlen(descr) + 1) : NULL;
@@ -65,7 +65,7 @@ static int descr_add(struct nuts_getopts_cmdlet_options* options, const char* de
   return 0;
 }
 
-int nuts_getopts_cmdlet_options_add(struct nuts_getopts_cmdlet_options* options, const char* lname, char sname, int arg, const char* descr) {
+int nuts_getopts_cmdlet_options_add(struct nuts_getopts_cmdlet_option_list* options, const char* lname, char sname, int arg, const char* descr) {
   if (options == NULL || (lname == NULL && sname == 0))
     return -1;
 
@@ -78,7 +78,7 @@ int nuts_getopts_cmdlet_options_add(struct nuts_getopts_cmdlet_options* options,
   return rc;
 }
 
-void nuts_getopts_cmdlet_options_release(struct nuts_getopts_cmdlet_options* options) {
+void nuts_getopts_cmdlet_options_release(struct nuts_getopts_cmdlet_option_list* options) {
   if (options == NULL)
     return;
 

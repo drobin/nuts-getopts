@@ -34,7 +34,7 @@ struct nuts_getopts_cmdlet_head {
   struct nuts_getopts_cmdlet_s* last;
 };
 
-struct nuts_getopts_cmdlet_options {
+struct nuts_getopts_cmdlet_option_list {
   int nopts;
   struct nuts_getopts_option* opts;
   char** descr;
@@ -46,7 +46,7 @@ struct nuts_getopts_cmdlet_s {
   char* syntax;
   char* sdescr;
   char* ldescr;
-  struct nuts_getopts_cmdlet_options options;
+  struct nuts_getopts_cmdlet_option_list options;
   struct nuts_getopts_option_group optgroup[3];
   struct nuts_getopts_cmdlet_head cmdlets;
   nuts_getopts_cmdlet_func func;
@@ -59,8 +59,8 @@ struct nuts_getopts_tool_s {
   int nevents;
 };
 
-int nuts_getopts_cmdlet_options_add(struct nuts_getopts_cmdlet_options* options, const char* lname, char sname, int arg, const char* descr);
-void nuts_getopts_cmdlet_options_release(struct nuts_getopts_cmdlet_options* options);
+int nuts_getopts_cmdlet_options_add(struct nuts_getopts_cmdlet_option_list* options, const char* lname, char sname, int arg, const char* descr);
+void nuts_getopts_cmdlet_options_release(struct nuts_getopts_cmdlet_option_list* options);
 
 nuts_getopts_cmdlet* nuts_getopts_cmdlet_new_standalone(const nuts_getopts_cmdlet* parent, const char* action);
 void nuts_getopts_cmdlet_free(nuts_getopts_cmdlet* cmdlet);
