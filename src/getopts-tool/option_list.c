@@ -48,34 +48,32 @@ static int option_add(struct nuts_getopts_cmdlet_option_list* options, const cha
   return 0;
 }
 
-static int descr_add(struct nuts_getopts_cmdlet_option_list* options, const char* descr) {
+static nuts_getopts_cmdlet_option* copt_add(struct nuts_getopts_cmdlet_option_list* options) {
   const int n = options->nopts + 1;
-  char** new_arr = realloc(options->descr, n * sizeof(char**));
-  char* new_descr = (descr != NULL) ? malloc(strlen(descr) + 1) : NULL;
+  nuts_getopts_cmdlet_option* new_copts = realloc(options->copts, n * sizeof(nuts_getopts_cmdlet_option));
 
-  if ((new_arr == NULL) || ((descr != NULL) && (new_descr == NULL))) {
-    free(new_arr);
-    free(new_descr);
-    return -1;
-  }
+  if (new_copts == NULL)
+    return NULL;
 
-  new_arr[options->nopts] = (descr != NULL) ? strcpy(new_descr, descr) : NULL;
-  options->descr = new_arr;
+  nuts_getopts_cmdlet_option_init(&new_copts[options->nopts]);
+  options->copts = new_copts;
 
-  return 0;
+  return &options->copts[options->nopts];
 }
 
-int nuts_getopts_cmdlet_option_list_add(struct nuts_getopts_cmdlet_option_list* options, const char* lname, char sname, int arg, const char* descr) {
+nuts_getopts_cmdlet_option* nuts_getopts_cmdlet_option_list_add(struct nuts_getopts_cmdlet_option_list* options, const char* lname, char sname, int arg) {
   if (options == NULL || (lname == NULL && sname == 0))
-    return -1;
+    return NULL;
 
-  int rc = option_add(options, lname, sname, arg);
-  rc = (rc == 0) ? descr_add(options, descr) : rc;
+  nuts_getopts_cmdlet_option* option = NULL;
 
-  if (rc == 0)
+  if (option_add(options, lname, sname, arg) == 0)
+    option = copt_add(options);
+
+  if (option != NULL)
     options->nopts++;
 
-  return rc;
+  return option;
 }
 
 void nuts_getopts_cmdlet_option_list_release(struct nuts_getopts_cmdlet_option_list* options) {
@@ -84,9 +82,9 @@ void nuts_getopts_cmdlet_option_list_release(struct nuts_getopts_cmdlet_option_l
 
   for (int i = 0; i < options->nopts; i++) {
     free(options->opts[i].lname);
-    free(options->descr[i]);
+    nuts_getopts_cmdlet_option_release(&options->copts[i]);
   }
 
   free(options->opts);
-  free(options->descr);
+  free(options->copts);
 }

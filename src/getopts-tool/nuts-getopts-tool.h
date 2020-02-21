@@ -33,6 +33,7 @@ extern "C" {
 
 typedef struct nuts_getopts_tool_s nuts_getopts_tool;
 typedef struct nuts_getopts_cmdlet_s nuts_getopts_cmdlet;
+typedef struct nuts_getopts_cmdlet_option_s nuts_getopts_cmdlet_option;
 typedef int (*nuts_getopts_cmdlet_func)(nuts_getopts_tool* tool);
 
 #define NUTS_GETOPTS_TOOL_RC_REQHELP (1 << 8)
@@ -52,8 +53,10 @@ nuts_getopts_cmdlet* nuts_getopts_cmdlet_new(nuts_getopts_cmdlet* cmdlet, const 
 int nuts_getopts_cmdlet_set_syntax(nuts_getopts_cmdlet* cmdlet, const char* syntax);
 int nuts_getopts_cmdlet_set_sdescr(nuts_getopts_cmdlet* cmdlet, const char* sdescr);
 int nuts_getopts_cmdlet_set_ldescr(nuts_getopts_cmdlet* cmdlet, const char* ldescr);
-int nuts_getopts_cmdlet_add_option(nuts_getopts_cmdlet* cmdlet, const char* lname, char sname, int arg, const char* descr);
+nuts_getopts_cmdlet_option* nuts_getopts_cmdlet_add_option(nuts_getopts_cmdlet* cmdlet, const char* lname, char sname, int arg);
 void nuts_getopts_cmdlet_assign_func(nuts_getopts_cmdlet* cmdlet, nuts_getopts_cmdlet_func func);
+
+int nuts_getopts_cmdlet_option_set_descr(nuts_getopts_cmdlet_option* option, const char* descr);
 
 #ifdef __cplusplus
 }

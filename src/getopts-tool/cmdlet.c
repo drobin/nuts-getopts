@@ -129,18 +129,18 @@ int nuts_getopts_cmdlet_set_ldescr(nuts_getopts_cmdlet* cmdlet, const char* ldes
   return _eval_update_attr(cmdlet, ldescr, ldescr);
 }
 
-int nuts_getopts_cmdlet_add_option(nuts_getopts_cmdlet* cmdlet, const char* lname, char sname, int arg, const char* descr) {
+nuts_getopts_cmdlet_option* nuts_getopts_cmdlet_add_option(nuts_getopts_cmdlet* cmdlet, const char* lname, char sname, int arg) {
   if (cmdlet == NULL || (lname == NULL && sname == 0))
-    return -1;
+    return NULL;
 
-  int rc = nuts_getopts_cmdlet_option_list_add(&cmdlet->options, lname, sname, arg, descr);
+  nuts_getopts_cmdlet_option* option = nuts_getopts_cmdlet_option_list_add(&cmdlet->options, lname, sname, arg);
 
-  if (rc == 0) {
+  if (option != NULL) {
     int idx = (cmdlet->parent == NULL) ? 0 : 1;
     cmdlet->optgroup[idx].list = cmdlet->options.opts;
   }
 
-  return rc;
+  return option;
 }
 
 void nuts_getopts_cmdlet_assign_func(nuts_getopts_cmdlet* cmdlet, nuts_getopts_cmdlet_func func) {

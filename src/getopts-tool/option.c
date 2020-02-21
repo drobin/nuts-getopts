@@ -22,20 +22,32 @@
  * SOFTWARE.
  *****************************************************************************/
 
-#ifndef NUTS_GETOPTS_TOOL_OPTION_LIST_H
-#define NUTS_GETOPTS_TOOL_OPTION_LIST_H
-
-#include <nuts-getopts.h>
+#include <stdlib.h>
+#include <string.h>
 
 #include "option.h"
 
-struct nuts_getopts_cmdlet_option_list {
-  int nopts;
-  struct nuts_getopts_option* opts;
-  nuts_getopts_cmdlet_option* copts;
-};
+void nuts_getopts_cmdlet_option_init(nuts_getopts_cmdlet_option* option) {
+  if (option != NULL)
+    memset(option, 0, sizeof(struct nuts_getopts_cmdlet_option_s));
+}
 
-nuts_getopts_cmdlet_option* nuts_getopts_cmdlet_option_list_add(struct nuts_getopts_cmdlet_option_list* options, const char* lname, char sname, int arg);
-void nuts_getopts_cmdlet_option_list_release(struct nuts_getopts_cmdlet_option_list* options);
+void nuts_getopts_cmdlet_option_release(nuts_getopts_cmdlet_option* option) {
+  if (option != NULL)
+    free(option->descr);
+}
 
-#endif  /* NUTS_GETOPTS_TOOL_OPTION_LIST_H */
+int nuts_getopts_cmdlet_option_set_descr(nuts_getopts_cmdlet_option* option, const char* descr) {
+  if (option == NULL)
+    return -1;
+
+  free(option->descr);
+  option->descr = NULL;
+
+  if (descr != NULL) {
+    if ((option->descr = malloc(strlen(descr) + 1)) != NULL)
+      strncpy(option->descr, descr, strlen(descr) + 1);
+  }
+
+  return (descr == NULL || option->descr != NULL) ? 0 : -1;
+}

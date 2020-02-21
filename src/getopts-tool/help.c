@@ -30,7 +30,7 @@
 
 struct option_entry {
   const struct nuts_getopts_option* option;
-  const char* descr;
+  const nuts_getopts_cmdlet_option* copt;
   struct option_entry* next;
 };
 
@@ -39,14 +39,14 @@ struct option_head {
   struct option_entry* last;
 };
 
-static struct option_entry* option_entry_new(const struct nuts_getopts_option* option, const char* descr) {
+static struct option_entry* option_entry_new(const struct nuts_getopts_option* option, const nuts_getopts_cmdlet_option* copt) {
   struct option_entry* entry = malloc(sizeof(struct option_entry));
 
   if (entry == NULL)
     return 0;
 
   entry->option = option;
-  entry->descr = descr;
+  entry->copt = copt;
   entry->next = NULL;
 
   return entry;
@@ -54,7 +54,7 @@ static struct option_entry* option_entry_new(const struct nuts_getopts_option* o
 
 static void option_entry_collect(const nuts_getopts_cmdlet* cmdlet, struct option_head* head) {
   for (int i = 0; i < cmdlet->options.nopts; i++) {
-    struct option_entry* entry = option_entry_new(&cmdlet->options.opts[i], cmdlet->options.descr[i]);
+    struct option_entry* entry = option_entry_new(&cmdlet->options.opts[i], &cmdlet->options.copts[i]);
 
     if (head->first != NULL) {
       head->last->next = entry;
@@ -159,11 +159,11 @@ static void print_options(const struct option_head* head) {
     if (entry->option->lname != NULL) {
       printf(" --%s", entry->option->lname);
       print_ralign(entry->option->lname, max_lname_len);
-      printf("  %s\n", entry->descr);
+      printf("  %s\n", entry->copt->descr);
     } else {
       printf("   "); // space minus minus
       print_ralign("", max_lname_len + 2);
-      printf("%s\n", entry->descr);
+      printf("%s\n", entry->copt->descr);
     }
   }
 }

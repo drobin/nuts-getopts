@@ -22,20 +22,17 @@
  * SOFTWARE.
  *****************************************************************************/
 
-#ifndef NUTS_GETOPTS_TOOL_OPTION_LIST_H
-#define NUTS_GETOPTS_TOOL_OPTION_LIST_H
+#ifndef NUTS_GETOPTS_TOOL_OPTION_H
+#define NUTS_GETOPTS_TOOL_OPTION_H
 
-#include <nuts-getopts.h>
+#include "nuts-getopts-tool.h"
 
-#include "option.h"
-
-struct nuts_getopts_cmdlet_option_list {
-  int nopts;
-  struct nuts_getopts_option* opts;
-  nuts_getopts_cmdlet_option* copts;
+struct nuts_getopts_cmdlet_option_s {
+  char* descr;
 };
 
-nuts_getopts_cmdlet_option* nuts_getopts_cmdlet_option_list_add(struct nuts_getopts_cmdlet_option_list* options, const char* lname, char sname, int arg);
-void nuts_getopts_cmdlet_option_list_release(struct nuts_getopts_cmdlet_option_list* options);
+void nuts_getopts_cmdlet_option_init(nuts_getopts_cmdlet_option* option);
+void nuts_getopts_cmdlet_option_release(nuts_getopts_cmdlet_option* option);
 
-#endif  /* NUTS_GETOPTS_TOOL_OPTION_LIST_H */
+
+#endif  /* NUTS_GETOPTS_TOOL_OPTION_H*/
