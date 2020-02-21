@@ -25,7 +25,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "internal.h"
+#include "option_list.h"
 
 static int option_add(struct nuts_getopts_cmdlet_option_list* options, const char* lname, char sname, int /*nuts_getopts_argument_type*/ arg) {
   const int n = options->nopts + 2;
@@ -65,7 +65,7 @@ static int descr_add(struct nuts_getopts_cmdlet_option_list* options, const char
   return 0;
 }
 
-int nuts_getopts_cmdlet_options_add(struct nuts_getopts_cmdlet_option_list* options, const char* lname, char sname, int arg, const char* descr) {
+int nuts_getopts_cmdlet_option_list_add(struct nuts_getopts_cmdlet_option_list* options, const char* lname, char sname, int arg, const char* descr) {
   if (options == NULL || (lname == NULL && sname == 0))
     return -1;
 
@@ -78,7 +78,7 @@ int nuts_getopts_cmdlet_options_add(struct nuts_getopts_cmdlet_option_list* opti
   return rc;
 }
 
-void nuts_getopts_cmdlet_options_release(struct nuts_getopts_cmdlet_option_list* options) {
+void nuts_getopts_cmdlet_option_list_release(struct nuts_getopts_cmdlet_option_list* options) {
   if (options == NULL)
     return;
 

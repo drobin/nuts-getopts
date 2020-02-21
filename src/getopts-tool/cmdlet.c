@@ -80,7 +80,7 @@ void nuts_getopts_cmdlet_free(nuts_getopts_cmdlet* cmdlet) {
   free(cmdlet->syntax);
   free(cmdlet->sdescr);
   free(cmdlet->ldescr);
-  nuts_getopts_cmdlet_options_release(&cmdlet->options);
+  nuts_getopts_cmdlet_option_list_release(&cmdlet->options);
   nuts_getopts_cmdlet_head_release(&cmdlet->cmdlets);
 
   free(cmdlet);
@@ -133,7 +133,7 @@ int nuts_getopts_cmdlet_add_option(nuts_getopts_cmdlet* cmdlet, const char* lnam
   if (cmdlet == NULL || (lname == NULL && sname == 0))
     return -1;
 
-  int rc = nuts_getopts_cmdlet_options_add(&cmdlet->options, lname, sname, arg, descr);
+  int rc = nuts_getopts_cmdlet_option_list_add(&cmdlet->options, lname, sname, arg, descr);
 
   if (rc == 0) {
     int idx = (cmdlet->parent == NULL) ? 0 : 1;

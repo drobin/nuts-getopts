@@ -30,7 +30,8 @@ add_library(nuts-getopts-tool STATIC
   head.c
   help.c
   internal.h
-  options.c
+  option_list.c
+  option_list.h
   tool.c
 )
 

@@ -28,16 +28,11 @@
 #include <nuts-getopts.h>
 
 #include "nuts-getopts-tool.h"
+#include "option_list.h"
 
 struct nuts_getopts_cmdlet_head {
   struct nuts_getopts_cmdlet_s* first;
   struct nuts_getopts_cmdlet_s* last;
-};
-
-struct nuts_getopts_cmdlet_option_list {
-  int nopts;
-  struct nuts_getopts_option* opts;
-  char** descr;
 };
 
 struct nuts_getopts_cmdlet_s {
@@ -58,9 +53,6 @@ struct nuts_getopts_tool_s {
   struct nuts_getopts_event* events;
   int nevents;
 };
-
-int nuts_getopts_cmdlet_options_add(struct nuts_getopts_cmdlet_option_list* options, const char* lname, char sname, int arg, const char* descr);
-void nuts_getopts_cmdlet_options_release(struct nuts_getopts_cmdlet_option_list* options);
 
 nuts_getopts_cmdlet* nuts_getopts_cmdlet_new_standalone(const nuts_getopts_cmdlet* parent, const char* action);
 void nuts_getopts_cmdlet_free(nuts_getopts_cmdlet* cmdlet);
