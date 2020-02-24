@@ -28,6 +28,8 @@
 
 #include "internal.h"
 
+#define _print_null(s) (((s) != NULL) ? (s) : "")
+
 struct option_entry {
   const struct nuts_getopts_option* option;
   const nuts_getopts_cmdlet_option* copt;
@@ -159,11 +161,11 @@ static void print_options(const struct option_head* head) {
     if (entry->option->lname != NULL) {
       printf(" --%s", entry->option->lname);
       print_ralign(entry->option->lname, max_lname_len);
-      printf("  %s\n", entry->copt->descr);
+      printf("  %s\n", _print_null(entry->copt->descr));
     } else {
       printf("   "); // space minus minus
       print_ralign("", max_lname_len + 2);
-      printf("%s\n", entry->copt->descr);
+      printf("%s\n", _print_null(entry->copt->descr));
     }
   }
 }
