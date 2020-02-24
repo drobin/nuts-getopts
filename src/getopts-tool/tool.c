@@ -47,53 +47,53 @@ static void print_error_event(const struct nuts_getopts_event* event) {
     fprintf(stderr, "trying to error print an event of type %d...\n", event->type);
 }
 
-static struct nuts_getopts_event* event_new(nuts_getopts_tool* tool) {
-  struct nuts_getopts_event* new_events = realloc(tool->events, sizeof(struct nuts_getopts_event) * (tool->nevents + 1));
+static struct nuts_getopts_event_entry* event_new(nuts_getopts_tool* tool) {
+  struct nuts_getopts_event_entry* entry = malloc(sizeof(struct nuts_getopts_event_entry));
 
-  if (new_events == NULL)
-    return NULL;
+  if (entry != NULL) {
+    memset(entry, 0, sizeof(struct nuts_getopts_event_entry));
+    SLIST_INSERT_HEAD(&tool->ev_head, entry, entries);
+  }
 
-  struct nuts_getopts_event* ev = &new_events[tool->nevents];
-  memset(ev, 0, sizeof(struct nuts_getopts_event));
-
-  tool->events = new_events;
-  tool->nevents++;
-
-  return ev;
+  return entry;
 }
 
-static const struct nuts_getopts_event* event_find_tool(const nuts_getopts_tool* tool) {
-  for (int i = 0; i < tool->nevents; i++) {
-    if (tool->events[i].type == nuts_getopts_tool_event)
-      return &tool->events[i];
+static const struct nuts_getopts_event_entry* event_find_tool(const nuts_getopts_tool* tool) {
+  const struct nuts_getopts_event_entry* entry;
+
+  SLIST_FOREACH(entry, &tool->ev_head, entries) {
+    if (entry->ev.type == nuts_getopts_tool_event)
+      return entry;
   }
 
   return NULL;
 }
 
-static const struct nuts_getopts_event* event_find_option(const nuts_getopts_tool* tool, const char* name) {
+static const struct nuts_getopts_event_entry* event_find_option(const nuts_getopts_tool* tool, const char* name) {
+  const struct nuts_getopts_event_entry* entry;
   const size_t len = (name != NULL) ? strlen(name) : 0;
 
-  for (int i = 0; i < tool->nevents; i++) {
-    if (tool->events[i].type == nuts_getopts_option_event) {
-      const struct nuts_getopts_option* option = tool->events[i].u.opt.option;
+  SLIST_FOREACH(entry, &tool->ev_head, entries) {
+    if (entry->ev.type == nuts_getopts_option_event) {
+      const struct nuts_getopts_option* option = entry->ev.u.opt.option;
 
       if ((len == 1 && option->sname == name[0]) ||
           (len > 1 && strncmp(option->lname, name, len) == 0))
-        return &tool->events[i];
+        return entry;
     }
   }
 
   return NULL;
 }
 
-static const struct nuts_getopts_event* event_find_arg(const nuts_getopts_tool* tool, int idx) {
+static const struct nuts_getopts_event_entry* event_find_arg(const nuts_getopts_tool* tool, int idx) {
+  const struct nuts_getopts_event_entry* entry;
   int aidx = 0;
 
-  for (int i = 0; i < tool->nevents; i++) {
-    if (tool->events[i].type == nuts_getopts_argument_event) {
+  SLIST_FOREACH(entry, &tool->ev_head, entries) {
+    if (entry->ev.type == nuts_getopts_argument_event) {
       if (aidx == idx)
-        return &tool->events[i];
+        return entry;
       aidx++;
     }
   }
@@ -129,14 +129,14 @@ static int cmdlet_parse(nuts_getopts_tool* tool, nuts_getopts_cmdlet* cmdlet, in
   nuts_getopts_state state = { 0 };
 
   while (1) {
-    struct nuts_getopts_event* ev = event_new(tool);
+    struct nuts_getopts_event_entry* ev = event_new(tool);
 
     if (ev == NULL)
       return -1;
 
-    if (nuts_getopts_group(argc, argv, cmdlet->optgroup, 0, &state, ev) == 0) {
-      if (ev->type == nuts_getopts_error_event) {
-        print_error_event(ev);
+    if (nuts_getopts_group(argc, argv, cmdlet->optgroup, 0, &state, &ev->ev) == 0) {
+      if (ev->ev.type == nuts_getopts_error_event) {
+        print_error_event(&ev->ev);
         return -1;
       }
     } else
@@ -163,6 +163,7 @@ nuts_getopts_tool* nuts_getopts_tool_new() {
 
   memset(tool, 0, sizeof(struct nuts_getopts_tool_s));
   tool->root = nuts_getopts_cmdlet_new_standalone(NULL, "root");
+  SLIST_INIT(&tool->ev_head);
 
   return tool;
 }
@@ -170,7 +171,13 @@ nuts_getopts_tool* nuts_getopts_tool_new() {
 void nuts_getopts_tool_free(nuts_getopts_tool* tool) {
   if (tool != NULL) {
     nuts_getopts_cmdlet_free(tool->root);
-    free(tool->events);
+
+    while (!SLIST_EMPTY(&tool->ev_head)) {
+      struct nuts_getopts_event_entry* entry = SLIST_FIRST(&tool->ev_head);
+      SLIST_REMOVE_HEAD(&tool->ev_head, entries);
+      free(entry);
+    }
+
     free(tool);
   }
 }
@@ -193,31 +200,31 @@ void nuts_getopts_tool_enable_help(nuts_getopts_tool* tool) {
 
 const char* nuts_getopts_tool_name(const nuts_getopts_tool* tool) {
   if (tool != NULL) {
-    const struct nuts_getopts_event* ev = event_find_tool(tool);
-    return (ev != NULL) ? ev->u.tool : NULL;
+    const struct nuts_getopts_event_entry* ev = event_find_tool(tool);
+    return (ev != NULL) ? ev->ev.u.tool : NULL;
   } else
     return NULL;
 }
 
 const char* nuts_getopts_tool_argument(const nuts_getopts_tool* tool, int idx) {
   if (tool != NULL) {
-    const struct nuts_getopts_event* ev = event_find_arg(tool, idx);
-    return (ev != NULL) ? ev->u.arg : NULL;
+    const struct nuts_getopts_event_entry* ev = event_find_arg(tool, idx);
+    return (ev != NULL) ? ev->ev.u.arg : NULL;
   } else
     return NULL;
 }
 
 const char* nuts_getopts_tool_value(const nuts_getopts_tool* tool, const char* name) {
-  const struct nuts_getopts_event* ev = NULL;
+  const struct nuts_getopts_event_entry* ev = NULL;
 
   if (tool != NULL && name != NULL)
     ev = event_find_option(tool, name);
 
-  return (ev != NULL) ? ev->u.opt.value : NULL;
+  return (ev != NULL) ? ev->ev.u.opt.value : NULL;
 }
 
 int nuts_getopts_tool_is_set(const nuts_getopts_tool* tool, const char* name) {
-  const struct nuts_getopts_event* ev = NULL;
+  const struct nuts_getopts_event_entry* ev = NULL;
 
   if (tool != NULL && name != NULL)
     ev = event_find_option(tool, name);
