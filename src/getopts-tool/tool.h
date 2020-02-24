@@ -22,31 +22,12 @@
  * SOFTWARE.
  *****************************************************************************/
 
-#ifndef NUTS_GETOPTS_TOOL_INTERNAL_H
-#define NUTS_GETOPTS_TOOL_INTERNAL_H
+#ifndef NUTS_GETOPTS_TOOL_TOOL_H
+#define NUTS_GETOPTS_TOOL_TOOL_H
 
 #include <nuts-getopts.h>
 
 #include "nuts-getopts-tool.h"
-#include "option_list.h"
-
-struct nuts_getopts_cmdlet_head {
-  struct nuts_getopts_cmdlet_s* first;
-  struct nuts_getopts_cmdlet_s* last;
-};
-
-struct nuts_getopts_cmdlet_s {
-  const nuts_getopts_cmdlet* parent;
-  char* action;
-  char* syntax;
-  char* sdescr;
-  char* ldescr;
-  struct nuts_getopts_cmdlet_option_list options;
-  struct nuts_getopts_option_group optgroup[3];
-  struct nuts_getopts_cmdlet_head cmdlets;
-  nuts_getopts_cmdlet_func func;
-  struct nuts_getopts_cmdlet_s* next;
-};
 
 struct nuts_getopts_tool_s {
   nuts_getopts_cmdlet* root;
@@ -54,15 +35,4 @@ struct nuts_getopts_tool_s {
   int nevents;
 };
 
-nuts_getopts_cmdlet* nuts_getopts_cmdlet_new_standalone(const nuts_getopts_cmdlet* parent, const char* action);
-void nuts_getopts_cmdlet_free(nuts_getopts_cmdlet* cmdlet);
-int nuts_getopts_cmdlet_invoke(nuts_getopts_cmdlet* cmdlet, nuts_getopts_tool* tool);
-
-void nuts_getopts_cmdlet_head_init(struct nuts_getopts_cmdlet_head* head);
-void nuts_getopts_cmdlet_head_release(struct nuts_getopts_cmdlet_head* head);
-void nuts_getopts_cmdlet_head_insert(struct nuts_getopts_cmdlet_head* head, nuts_getopts_cmdlet* cmdlet);
-nuts_getopts_cmdlet* nuts_getopts_cmdlet_head_find(const struct nuts_getopts_cmdlet_head* head, const char* action);
-
-int nuts_getopts_help(nuts_getopts_tool* tool);
-
-#endif  /* NUTS_GETOPTS_TOOL_INTERNAL_H */
+#endif  /* NUTS_GETOPTS_TOOL_TOOL_H */

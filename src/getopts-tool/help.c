@@ -26,7 +26,9 @@
 #include <string.h>
 #include <stdio.h>
 
-#include "internal.h"
+#include "cmdlet.h"
+#include "help.h"
+#include "tool.h"
 
 #define _print_null(s) (((s) != NULL) ? (s) : "")
 #define _strlen_null(s) (((s) != NULL) ? strlen((s)) : (0))

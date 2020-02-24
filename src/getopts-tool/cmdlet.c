@@ -25,7 +25,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "internal.h"
+#include "cmdlet.h"
 
 nuts_getopts_cmdlet* nuts_getopts_cmdlet_new_standalone(const nuts_getopts_cmdlet* parent, const char* action) {
   // parent = NULL for root-cmdlet

@@ -26,7 +26,9 @@
 #include <string.h>
 #include <stdio.h>
 
-#include "internal.h"
+#include "cmdlet.h"
+#include "help.h"
+#include "tool.h"
 
 static void print_error_event(const struct nuts_getopts_event* event) {
   if (event->type == nuts_getopts_error_event) {

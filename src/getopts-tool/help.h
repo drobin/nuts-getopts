@@ -22,52 +22,11 @@
  * SOFTWARE.
  *****************************************************************************/
 
-#include <stdlib.h>
-#include <string.h>
+#ifndef NUTS_GETOPTS_TOOL_HELP_H
+#define NUTS_GETOPTS_TOOL_HELP_H
 
-#include "cmdlet.h"
+#include "nuts-getopts-tool.h"
 
-#define _foreach_cmdlet(head, cmdlet) \
-  for ((cmdlet) = (head)->first; (cmdlet) != NULL; (cmdlet) = (cmdlet)->next)
+int nuts_getopts_help(nuts_getopts_tool* tool);
 
-void nuts_getopts_cmdlet_head_init(struct nuts_getopts_cmdlet_head* head) {
-  if (head != NULL) {
-    head->first = NULL;
-    head->last = NULL;
-  }
-}
-
-void nuts_getopts_cmdlet_head_release(struct nuts_getopts_cmdlet_head* head) {
-  if (head != NULL) {
-    nuts_getopts_cmdlet* cmdlet;
-
-    _foreach_cmdlet(head, cmdlet) {
-      nuts_getopts_cmdlet_free(cmdlet);
-    }
-  }
-}
-
-void nuts_getopts_cmdlet_head_insert(struct nuts_getopts_cmdlet_head* head, nuts_getopts_cmdlet* cmdlet) {
-  if (head != NULL && cmdlet != NULL) {
-    if (head->first == NULL) {
-      head->first = head->last = cmdlet;
-    } else {
-      head->last->next = cmdlet;
-      head->last = cmdlet;
-    }
-  }
-}
-
-nuts_getopts_cmdlet* nuts_getopts_cmdlet_head_find(const struct nuts_getopts_cmdlet_head* head, const char* action) {
-  if (head != NULL && action != NULL) {
-    nuts_getopts_cmdlet* cmdlet;
-
-    _foreach_cmdlet(head, cmdlet) {
-      if (strcmp(cmdlet->action, action) == 0)
-        return cmdlet;
-    }
-  }
-
-  return NULL;
-}
-
+#endif  /* NUTS_GETOPTS_TOOL_HELP_H */

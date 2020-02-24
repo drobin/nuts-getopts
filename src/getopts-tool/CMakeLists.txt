@@ -27,14 +27,16 @@ set(PUBLIC_HEADER nuts-getopts-tool.h)
 add_library(nuts-getopts-tool STATIC
   ${PUBLIC_HEADER}
   cmdlet.c
+  cmdlet.h
   head.c
   help.c
-  internal.h
+  help.h
   option.c
   option.h
   option_list.c
   option_list.h
   tool.c
+  tool.h
 )
 
 target_link_libraries(nuts-getopts-tool
