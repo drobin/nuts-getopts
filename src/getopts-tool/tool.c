@@ -110,7 +110,7 @@ static nuts_getopts_cmdlet* cmdlet_detect(nuts_getopts_tool* tool, int argc, cha
 
   while ((rc = nuts_getopts(argc, argv, NULL, nuts_getopts_ignore_unknown_options, &state, &ev)) != -1) {
     if (ev.type == nuts_getopts_argument_event) {
-      nuts_getopts_cmdlet* next = nuts_getopts_cmdlet_head_find(&cur->cmdlets, ev.u.arg);
+      nuts_getopts_cmdlet* next = nuts_getopts_cmdlet_find(cur, ev.u.arg);
 
       if (next == NULL)
         break;
@@ -147,7 +147,7 @@ static int cmdlet_parse(nuts_getopts_tool* tool, nuts_getopts_cmdlet* cmdlet, in
 }
 
 static int invoke_help(nuts_getopts_tool* tool) {
-  nuts_getopts_cmdlet* cmdlet = nuts_getopts_cmdlet_head_find(&tool->root->cmdlets, "help");
+  nuts_getopts_cmdlet* cmdlet = nuts_getopts_cmdlet_find(tool->root, "help");
 
   if (cmdlet != NULL)
     return nuts_getopts_cmdlet_invoke(cmdlet, tool);

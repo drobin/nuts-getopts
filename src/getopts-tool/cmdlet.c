@@ -27,6 +27,37 @@
 
 #include "cmdlet.h"
 
+#define _foreach_cmdlet(head, cmdlet) \
+  for ((cmdlet) = (head)->first; (cmdlet) != NULL; (cmdlet) = (cmdlet)->next)
+
+static void cmdlet_head_release(struct nuts_getopts_cmdlet_head* head) {
+  nuts_getopts_cmdlet* cmdlet;
+
+  _foreach_cmdlet(head, cmdlet) {
+    nuts_getopts_cmdlet_free(cmdlet);
+  }
+}
+
+static void cmdlet_head_insert(struct nuts_getopts_cmdlet_head* head, nuts_getopts_cmdlet* cmdlet) {
+  if (head->first == NULL) {
+    head->first = head->last = cmdlet;
+  } else {
+    head->last->next = cmdlet;
+    head->last = cmdlet;
+  }
+}
+
+static nuts_getopts_cmdlet* cmdlet_head_find(const struct nuts_getopts_cmdlet_head* head, const char* action) {
+  nuts_getopts_cmdlet* cmdlet;
+
+  _foreach_cmdlet(head, cmdlet) {
+    if (strcmp(cmdlet->action, action) == 0)
+      return cmdlet;
+  }
+
+  return NULL;
+}
+
 nuts_getopts_cmdlet* nuts_getopts_cmdlet_new_standalone(const nuts_getopts_cmdlet* parent, const char* action) {
   // parent = NULL for root-cmdlet
   if (action == NULL || *action == '\0')
@@ -47,7 +78,6 @@ nuts_getopts_cmdlet* nuts_getopts_cmdlet_new_standalone(const nuts_getopts_cmdle
   memset(cmdlet, 0, sizeof(struct nuts_getopts_cmdlet_s));
   cmdlet->parent = parent;
   cmdlet->action = strcpy(cmdlet_action, action);
-  nuts_getopts_cmdlet_head_init(&cmdlet->cmdlets);
 
   if (parent != NULL)
     cmdlet->optgroup[0].group = parent->optgroup;
@@ -61,13 +91,13 @@ nuts_getopts_cmdlet* nuts_getopts_cmdlet_new(nuts_getopts_cmdlet* cmdlet, const 
 
   nuts_getopts_cmdlet* child;
 
-  if ((child = nuts_getopts_cmdlet_head_find(&cmdlet->cmdlets, action)) != NULL)
+  if ((child = cmdlet_head_find(&cmdlet->cmdlets, action)) != NULL)
     return NULL; // already exists
 
   if ((child = nuts_getopts_cmdlet_new_standalone(cmdlet, action)) == NULL)
     return NULL;
 
-  nuts_getopts_cmdlet_head_insert(&cmdlet->cmdlets, child);
+  cmdlet_head_insert(&cmdlet->cmdlets, child);
 
   return child;
 }
@@ -81,9 +111,16 @@ void nuts_getopts_cmdlet_free(nuts_getopts_cmdlet* cmdlet) {
   free(cmdlet->sdescr);
   free(cmdlet->ldescr);
   nuts_getopts_cmdlet_option_list_release(&cmdlet->options);
-  nuts_getopts_cmdlet_head_release(&cmdlet->cmdlets);
+  cmdlet_head_release(&cmdlet->cmdlets);
 
   free(cmdlet);
+}
+
+nuts_getopts_cmdlet* nuts_getopts_cmdlet_find(nuts_getopts_cmdlet* cmdlet, const char* action) {
+  if (cmdlet != NULL && action != NULL)
+    return cmdlet_head_find(&cmdlet->cmdlets, action);
+  else
+    return NULL;
 }
 
 #define _update_attr(cmdlet, attr, val) \

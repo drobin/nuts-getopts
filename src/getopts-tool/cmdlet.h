@@ -29,8 +29,8 @@
 #include "option_list.h"
 
 struct nuts_getopts_cmdlet_head {
-  struct nuts_getopts_cmdlet_s* first;
-  struct nuts_getopts_cmdlet_s* last;
+  nuts_getopts_cmdlet* first;
+  nuts_getopts_cmdlet* last;
 };
 
 struct nuts_getopts_cmdlet_s {
@@ -48,11 +48,7 @@ struct nuts_getopts_cmdlet_s {
 
 nuts_getopts_cmdlet* nuts_getopts_cmdlet_new_standalone(const nuts_getopts_cmdlet* parent, const char* action);
 void nuts_getopts_cmdlet_free(nuts_getopts_cmdlet* cmdlet);
+nuts_getopts_cmdlet* nuts_getopts_cmdlet_find(nuts_getopts_cmdlet* cmdlet, const char* action);
 int nuts_getopts_cmdlet_invoke(nuts_getopts_cmdlet* cmdlet, nuts_getopts_tool* tool);
-
-void nuts_getopts_cmdlet_head_init(struct nuts_getopts_cmdlet_head* head);
-void nuts_getopts_cmdlet_head_release(struct nuts_getopts_cmdlet_head* head);
-void nuts_getopts_cmdlet_head_insert(struct nuts_getopts_cmdlet_head* head, nuts_getopts_cmdlet* cmdlet);
-nuts_getopts_cmdlet* nuts_getopts_cmdlet_head_find(const struct nuts_getopts_cmdlet_head* head, const char* action);
 
 #endif  /* NUTS_GETOPTS_TOOL_CMDLET_H */
