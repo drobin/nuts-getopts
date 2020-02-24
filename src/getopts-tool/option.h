@@ -29,6 +29,7 @@
 
 struct nuts_getopts_cmdlet_option_s {
   char* descr;
+  char* arg;
 };
 
 void nuts_getopts_cmdlet_option_init(nuts_getopts_cmdlet_option* option);

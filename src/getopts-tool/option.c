@@ -33,8 +33,10 @@ void nuts_getopts_cmdlet_option_init(nuts_getopts_cmdlet_option* option) {
 }
 
 void nuts_getopts_cmdlet_option_release(nuts_getopts_cmdlet_option* option) {
-  if (option != NULL)
+  if (option != NULL) {
     free(option->descr);
+    free(option->arg);
+  }
 }
 
 int nuts_getopts_cmdlet_option_set_descr(nuts_getopts_cmdlet_option* option, const char* descr) {
@@ -50,4 +52,19 @@ int nuts_getopts_cmdlet_option_set_descr(nuts_getopts_cmdlet_option* option, con
   }
 
   return (descr == NULL || option->descr != NULL) ? 0 : -1;
+}
+
+int nuts_getopts_cmdlet_option_set_arg(nuts_getopts_cmdlet_option* option, const char* arg) {
+  if (option == NULL)
+    return -1;
+
+  free(option->arg);
+  option->arg = NULL;
+
+  if (arg != NULL) {
+    if ((option->arg = malloc(strlen(arg) + 1)) != NULL)
+      strncpy(option->arg, arg, strlen(arg) + 1);
+  }
+
+  return (arg == NULL || option->arg != NULL) ? 0 : -1;
 }

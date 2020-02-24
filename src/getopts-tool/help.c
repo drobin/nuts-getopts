@@ -29,6 +29,7 @@
 #include "internal.h"
 
 #define _print_null(s) (((s) != NULL) ? (s) : "")
+#define _strlen_null(s) (((s) != NULL) ? strlen((s)) : (0))
 
 struct option_entry {
   const struct nuts_getopts_option* option;
@@ -80,13 +81,11 @@ static void option_entry_free(struct option_head* head) {
   }
 }
 
-static void print_ralign(const char* str, int max) {
-  int nspace = max - strlen(str);
-  char space[nspace];
+static void print_spaces(int n) {
+  char space[n];
 
-  memset(space, ' ', nspace);
-
-  printf("%.*s", nspace, space);
+  memset(space, ' ', n);
+  printf("%.*s", n, space);
 }
 
 static void print_syntax(nuts_getopts_tool* tool, nuts_getopts_cmdlet* cmdlet) {
@@ -127,7 +126,7 @@ static void print_actions(nuts_getopts_cmdlet* cmdlet) {
 
     if (cur->sdescr != NULL) {
       printf(" %s", cur->action);
-      print_ralign(cur->action, max_len);
+      print_spaces(max_len - strlen(cur->action));
       printf(" - %s\n", cur->sdescr);
     } else
       printf(" %s\n", cur->action);
@@ -138,35 +137,56 @@ static void print_options(const struct option_head* head) {
   printf("\nOptions:\n\n");
 
   int max_lname_len = 0;
+  int max_arg_len = 0;
 
   for (const struct option_entry* entry = head->first; entry != NULL; entry = entry->next) {
-    if (entry->option->lname != NULL) {
-      int len = strlen(entry->option->lname);
-      if (len > max_lname_len)
-        max_lname_len = len;
+    int lname_len = _strlen_null(entry->option->lname);
+
+    if (lname_len > max_lname_len)
+      max_lname_len = lname_len;
+
+    if (entry->option->arg == nuts_getopts_required_argument) {
+      int len = _strlen_null(entry->copt->arg);
+
+      if (len == 0)
+        len = 3; // strlen("ARG")
+
+      if (len > max_arg_len)
+        max_arg_len = len;
     }
   }
 
   for (const struct option_entry* entry = head->first; entry != NULL; entry = entry->next) {
+    int pad = 0;
+
+    // (1) short option
     if (entry->option->sname != 0)
       printf(" -%c", entry->option->sname);
     else
       printf("   ");
 
+    // (2) (optional) comma separator between short- & long-option
     if (entry->option->sname != 0 && entry->option->lname != NULL)
-      printf(",");
+      printf(", ");
     else
-      printf(" ");
+      printf("  ");
 
-    if (entry->option->lname != NULL) {
-      printf(" --%s", entry->option->lname);
-      print_ralign(entry->option->lname, max_lname_len);
-      printf("  %s\n", _print_null(entry->copt->descr));
-    } else {
-      printf("   "); // space minus minus
-      print_ralign("", max_lname_len + 2);
-      printf("%s\n", _print_null(entry->copt->descr));
-    }
+    // (3) long option
+    if (entry->option->lname != NULL)
+      printf("--%s ", entry->option->lname);
+    pad += max_lname_len - _strlen_null(entry->option->lname);
+
+    // (4) argument to option
+    if (entry->option->arg == nuts_getopts_required_argument)
+      printf("%s ", ((entry->copt->arg != NULL) ? entry->copt->arg : "ARG"));
+    else
+      pad += 1 + max_arg_len;
+
+    // (5) Right-align everything
+    print_spaces(pad);
+
+    // (6) description
+    printf("%s\n", _print_null(entry->copt->descr));
   }
 }
 
