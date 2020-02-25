@@ -90,7 +90,7 @@ static void print_spaces(int n) {
   printf("%.*s", n, space);
 }
 
-static void print_syntax(nuts_getopts_tool* tool, nuts_getopts_cmdlet* cmdlet) {
+static void print_syntax(const nuts_getopts_tool* tool, const nuts_getopts_cmdlet* cmdlet) {
   const char* tool_name = nuts_getopts_tool_name(tool);
 
   if (cmdlet->parent != NULL) {
@@ -102,7 +102,7 @@ static void print_syntax(nuts_getopts_tool* tool, nuts_getopts_cmdlet* cmdlet) {
     printf("%s [options...] <actions...>\n", tool_name);
 }
 
-static void print_descr(nuts_getopts_cmdlet* cmdlet) {
+static void print_descr(const nuts_getopts_cmdlet* cmdlet) {
   if (cmdlet->sdescr != NULL)
     printf("\n%s\n", cmdlet->sdescr);
 
@@ -110,13 +110,14 @@ static void print_descr(nuts_getopts_cmdlet* cmdlet) {
     printf("\n%s\n", cmdlet->ldescr);
 }
 
-static void print_actions(nuts_getopts_cmdlet* cmdlet) {
-  if (cmdlet->cmdlets.first == NULL)
+static void print_actions(const nuts_getopts_cmdlet* cmdlet) {
+  if (SLIST_EMPTY(&cmdlet->cmdlets))
     return;
 
+  const nuts_getopts_cmdlet* cur;
   int max_len = 0;
 
-  for (const nuts_getopts_cmdlet* cur = cmdlet->cmdlets.first; cur != NULL; cur = cur->next) {
+  SLIST_FOREACH(cur, &cmdlet->cmdlets, entries) {
     int len = strlen(cur->action);
     if (len > max_len)
       max_len = len;
@@ -124,8 +125,7 @@ static void print_actions(nuts_getopts_cmdlet* cmdlet) {
 
   printf("\nActions:\n\n");
 
-  for (const nuts_getopts_cmdlet* cur = cmdlet->cmdlets.first; cur != NULL; cur = cur->next) {
-
+  SLIST_FOREACH(cur, &cmdlet->cmdlets, entries) {
     if (cur->sdescr != NULL) {
       printf(" %s", cur->action);
       print_spaces(max_len - strlen(cur->action));
@@ -192,8 +192,10 @@ static void print_options(const struct option_head* head) {
   }
 }
 
-static nuts_getopts_cmdlet* cmdlet_detect(nuts_getopts_tool* tool, nuts_getopts_cmdlet* parent, int idx) {
-  for (nuts_getopts_cmdlet* cur = parent->cmdlets.first; cur != NULL; cur = cur->next) {
+static const nuts_getopts_cmdlet* cmdlet_detect(nuts_getopts_tool* tool, const nuts_getopts_cmdlet* parent, int idx) {
+  const nuts_getopts_cmdlet* cur;
+
+  SLIST_FOREACH(cur, &parent->cmdlets, entries) {
     const char* arg = nuts_getopts_tool_argument(tool, idx);
 
     if (arg == NULL)
@@ -221,7 +223,7 @@ int nuts_getopts_help(nuts_getopts_tool* tool) {
     idx = 1;
   }
 
-  nuts_getopts_cmdlet* cmdlet = cmdlet_detect(tool, tool->root, idx);
+  const nuts_getopts_cmdlet* cmdlet = cmdlet_detect(tool, tool->root, idx);
   struct option_head optshead = { 0 };
 
   option_entry_collect(cmdlet, &optshead);

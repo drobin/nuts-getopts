@@ -27,30 +27,10 @@
 
 #include "cmdlet.h"
 
-#define _foreach_cmdlet(head, cmdlet) \
-  for ((cmdlet) = (head)->first; (cmdlet) != NULL; (cmdlet) = (cmdlet)->next)
-
-static void cmdlet_head_release(struct nuts_getopts_cmdlet_head* head) {
-  nuts_getopts_cmdlet* cmdlet;
-
-  _foreach_cmdlet(head, cmdlet) {
-    nuts_getopts_cmdlet_free(cmdlet);
-  }
-}
-
-static void cmdlet_head_insert(struct nuts_getopts_cmdlet_head* head, nuts_getopts_cmdlet* cmdlet) {
-  if (head->first == NULL) {
-    head->first = head->last = cmdlet;
-  } else {
-    head->last->next = cmdlet;
-    head->last = cmdlet;
-  }
-}
-
 static nuts_getopts_cmdlet* cmdlet_head_find(const struct nuts_getopts_cmdlet_head* head, const char* action) {
   nuts_getopts_cmdlet* cmdlet;
 
-  _foreach_cmdlet(head, cmdlet) {
+  SLIST_FOREACH(cmdlet, head, entries) {
     if (strcmp(cmdlet->action, action) == 0)
       return cmdlet;
   }
@@ -78,6 +58,7 @@ nuts_getopts_cmdlet* nuts_getopts_cmdlet_new_standalone(const nuts_getopts_cmdle
   memset(cmdlet, 0, sizeof(struct nuts_getopts_cmdlet_s));
   cmdlet->parent = parent;
   cmdlet->action = strcpy(cmdlet_action, action);
+  SLIST_INIT(&cmdlet->cmdlets);
 
   if (parent != NULL)
     cmdlet->optgroup[0].group = parent->optgroup;
@@ -97,7 +78,7 @@ nuts_getopts_cmdlet* nuts_getopts_cmdlet_new(nuts_getopts_cmdlet* cmdlet, const 
   if ((child = nuts_getopts_cmdlet_new_standalone(cmdlet, action)) == NULL)
     return NULL;
 
-  cmdlet_head_insert(&cmdlet->cmdlets, child);
+  SLIST_INSERT_HEAD(&cmdlet->cmdlets, child, entries);
 
   return child;
 }
@@ -111,7 +92,12 @@ void nuts_getopts_cmdlet_free(nuts_getopts_cmdlet* cmdlet) {
   free(cmdlet->sdescr);
   free(cmdlet->ldescr);
   nuts_getopts_cmdlet_option_list_release(&cmdlet->options);
-  cmdlet_head_release(&cmdlet->cmdlets);
+
+  while (!SLIST_EMPTY(&cmdlet->cmdlets)) {
+    nuts_getopts_cmdlet* entry = SLIST_FIRST(&cmdlet->cmdlets);
+    SLIST_REMOVE_HEAD(&cmdlet->cmdlets, entries);
+    nuts_getopts_cmdlet_free(entry);
+  }
 
   free(cmdlet);
 }

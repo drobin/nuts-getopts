@@ -27,11 +27,9 @@
 
 #include "nuts-getopts-tool.h"
 #include "option_list.h"
+#include "queue.h"
 
-struct nuts_getopts_cmdlet_head {
-  nuts_getopts_cmdlet* first;
-  nuts_getopts_cmdlet* last;
-};
+SLIST_HEAD(nuts_getopts_cmdlet_head, nuts_getopts_cmdlet_s);
 
 struct nuts_getopts_cmdlet_s {
   const nuts_getopts_cmdlet* parent;
@@ -43,7 +41,7 @@ struct nuts_getopts_cmdlet_s {
   struct nuts_getopts_option_group optgroup[3];
   struct nuts_getopts_cmdlet_head cmdlets;
   nuts_getopts_cmdlet_func func;
-  struct nuts_getopts_cmdlet_s* next;
+  SLIST_ENTRY(nuts_getopts_cmdlet_s) entries;
 };
 
 nuts_getopts_cmdlet* nuts_getopts_cmdlet_new_standalone(const nuts_getopts_cmdlet* parent, const char* action);
