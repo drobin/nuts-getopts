@@ -43,6 +43,13 @@ struct nuts_getopts_converter {
 
 #define NUTS_GETOPTS_TOOL_RC_REQHELP (1 << 8)
 
+typedef enum {
+  nuts_getopts_tool_no_arg = 0,
+  nuts_getopts_tool_string_arg = 1,
+  nuts_getopts_tool_int_arg = 2,
+  nuts_getopts_tool_size_arg = 3,
+} nuts_getopts_tool_arg_t;
+
 nuts_getopts_tool* nuts_getopts_tool_new();
 void nuts_getopts_tool_free(nuts_getopts_tool* tool);
 

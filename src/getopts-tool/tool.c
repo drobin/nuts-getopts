@@ -27,6 +27,7 @@
 #include <stdio.h>
 
 #include "cmdlet.h"
+#include "convert.h"
 #include "help.h"
 #include "tool.h"
 
@@ -215,6 +216,10 @@ nuts_getopts_tool* nuts_getopts_tool_new() {
   tool->root = nuts_getopts_cmdlet_new_standalone(tool, NULL, "root");
   SLIST_INIT(&tool->conv_head);
   SLIST_INIT(&tool->ev_head);
+
+  nuts_getopts_tool_add_converter(tool, nuts_getopts_tool_string_arg, nuts_getopts_string_converter());
+  nuts_getopts_tool_add_converter(tool, nuts_getopts_tool_int_arg, nuts_getopts_int_converter());
+  nuts_getopts_tool_add_converter(tool, nuts_getopts_tool_size_arg, nuts_getopts_size_converter());
 
   return tool;
 }

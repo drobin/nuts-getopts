@@ -28,6 +28,8 @@ add_library(nuts-getopts-tool STATIC
   ${PUBLIC_HEADER}
   cmdlet.c
   cmdlet.h
+  convert.c
+  convert.h
   help.c
   help.h
   option.c
