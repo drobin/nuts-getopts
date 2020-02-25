@@ -28,6 +28,7 @@
 
 #include "cmdlet.h"
 #include "help.h"
+#include "queue.h"
 #include "tool.h"
 
 #define _print_null(s) (((s) != NULL) ? (s) : "")
@@ -36,13 +37,10 @@
 struct option_entry {
   const struct nuts_getopts_option* option;
   const nuts_getopts_cmdlet_option* copt;
-  struct option_entry* next;
+  SLIST_ENTRY(option_entry) entries;
 };
 
-struct option_head {
-  struct option_entry* first;
-  struct option_entry* last;
-};
+SLIST_HEAD(option_head, option_entry);
 
 static struct option_entry* option_entry_new(const struct nuts_getopts_option* option, const nuts_getopts_cmdlet_option* copt) {
   struct option_entry* entry = malloc(sizeof(struct option_entry));
@@ -50,9 +48,9 @@ static struct option_entry* option_entry_new(const struct nuts_getopts_option* o
   if (entry == NULL)
     return 0;
 
+  memset(entry, 0, sizeof(struct option_entry));
   entry->option = option;
   entry->copt = copt;
-  entry->next = NULL;
 
   return entry;
 }
@@ -60,13 +58,7 @@ static struct option_entry* option_entry_new(const struct nuts_getopts_option* o
 static void option_entry_collect(const nuts_getopts_cmdlet* cmdlet, struct option_head* head) {
   for (int i = 0; i < cmdlet->options.nopts; i++) {
     struct option_entry* entry = option_entry_new(&cmdlet->options.opts[i], &cmdlet->options.copts[i]);
-
-    if (head->first != NULL) {
-      head->last->next = entry;
-      head->last = entry;
-    }
-    else
-      head->first = head->last = entry;
+    SLIST_INSERT_HEAD(head, entry, entries);
   }
 
   if (cmdlet->parent != NULL)
@@ -74,12 +66,10 @@ static void option_entry_collect(const nuts_getopts_cmdlet* cmdlet, struct optio
 }
 
 static void option_entry_free(struct option_head* head) {
-  struct option_entry* entry = head->first;
-
-  while (entry != NULL) {
-    struct option_entry* next = entry->next;
+  while (!SLIST_EMPTY(head)) {
+    struct option_entry* entry = SLIST_FIRST(head);
+    SLIST_REMOVE_HEAD(head, entries);
     free(entry);
-    entry = next;
   }
 }
 
@@ -138,10 +128,11 @@ static void print_actions(const nuts_getopts_cmdlet* cmdlet) {
 static void print_options(const struct option_head* head) {
   printf("\nOptions:\n\n");
 
+  const struct option_entry* entry;
   int max_lname_len = 0;
   int max_arg_len = 0;
 
-  for (const struct option_entry* entry = head->first; entry != NULL; entry = entry->next) {
+  SLIST_FOREACH(entry, head, entries) {
     int lname_len = _strlen_null(entry->option->lname);
 
     if (lname_len > max_lname_len)
@@ -158,7 +149,7 @@ static void print_options(const struct option_head* head) {
     }
   }
 
-  for (const struct option_entry* entry = head->first; entry != NULL; entry = entry->next) {
+  SLIST_FOREACH(entry, head, entries) {
     int pad = 0;
 
     // (1) short option
@@ -224,7 +215,7 @@ int nuts_getopts_help(nuts_getopts_tool* tool) {
   }
 
   const nuts_getopts_cmdlet* cmdlet = cmdlet_detect(tool, tool->root, idx);
-  struct option_head optshead = { 0 };
+  struct option_head optshead = SLIST_HEAD_INITIALIZER(optshead);
 
   option_entry_collect(cmdlet, &optshead);
 
