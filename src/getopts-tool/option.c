@@ -22,7 +22,9 @@
  * SOFTWARE.
  *****************************************************************************/
 
+#include <stdarg.h>
 #include <stdlib.h>
+#include <stdio.h>
 #include <string.h>
 
 #include "option.h"
@@ -41,7 +43,7 @@ void nuts_getopts_cmdlet_option_release(nuts_getopts_cmdlet_option* option) {
   }
 }
 
-int nuts_getopts_cmdlet_option_set_descr(nuts_getopts_cmdlet_option* option, const char* descr) {
+int nuts_getopts_cmdlet_option_set_descr(nuts_getopts_cmdlet_option* option, const char* descr, ...) {
   if (option == NULL)
     return -1;
 
@@ -49,8 +51,11 @@ int nuts_getopts_cmdlet_option_set_descr(nuts_getopts_cmdlet_option* option, con
   option->descr = NULL;
 
   if (descr != NULL) {
-    if ((option->descr = malloc(strlen(descr) + 1)) != NULL)
-      strncpy(option->descr, descr, strlen(descr) + 1);
+    va_list ap;
+
+    va_start(ap, descr);
+    vasprintf(&option->descr, descr, ap);
+    va_end(ap);
   }
 
   return (descr == NULL || option->descr != NULL) ? 0 : -1;
