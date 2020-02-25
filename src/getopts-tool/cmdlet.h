@@ -52,6 +52,7 @@ struct nuts_getopts_cmdlet_s {
 nuts_getopts_cmdlet* nuts_getopts_cmdlet_new_standalone(const nuts_getopts_tool* tool, const nuts_getopts_cmdlet* parent, const char* action);
 void nuts_getopts_cmdlet_free(nuts_getopts_cmdlet* cmdlet);
 nuts_getopts_cmdlet* nuts_getopts_cmdlet_find(nuts_getopts_cmdlet* cmdlet, const char* action);
+const nuts_getopts_cmdlet_option* nuts_getopts_cmdlet_find_option(const nuts_getopts_cmdlet* cmdlet, const struct nuts_getopts_option* option);
 int nuts_getopts_cmdlet_invoke(nuts_getopts_cmdlet* cmdlet, nuts_getopts_tool* tool);
 
 #endif  /* NUTS_GETOPTS_TOOL_CMDLET_H */

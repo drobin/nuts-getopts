@@ -32,6 +32,8 @@
 
 struct nuts_getopts_event_entry {
   struct nuts_getopts_event ev;
+  const struct nuts_getopts_converter* converter;
+  void* value;
   SLIST_ENTRY(nuts_getopts_event_entry) entries;
 };
 

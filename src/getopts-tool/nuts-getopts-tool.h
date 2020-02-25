@@ -52,7 +52,8 @@ nuts_getopts_cmdlet* nuts_getopts_tool_root_cmdlet(const nuts_getopts_tool* tool
 void nuts_getopts_tool_enable_help(nuts_getopts_tool* tool);
 const char* nuts_getopts_tool_name(const nuts_getopts_tool* tool);
 const char* nuts_getopts_tool_argument(const nuts_getopts_tool* tool, int idx);
-const char* nuts_getopts_tool_value(const nuts_getopts_tool* tool, const char* name);
+const char* nuts_getopts_tool_value_str(const nuts_getopts_tool* tool, const char* name);
+const void* nuts_getopts_tool_value(const nuts_getopts_tool* tool, const char* name);
 int nuts_getopts_tool_is_set(const nuts_getopts_tool* tool, const char* name);
 
 int nuts_getopts_tool_run(nuts_getopts_tool* tool, int argc, char* argv[]);

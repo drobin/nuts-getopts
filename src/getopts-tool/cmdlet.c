@@ -152,6 +152,19 @@ nuts_getopts_cmdlet* nuts_getopts_cmdlet_find(nuts_getopts_cmdlet* cmdlet, const
     return NULL;
 }
 
+const nuts_getopts_cmdlet_option* nuts_getopts_cmdlet_find_option(const nuts_getopts_cmdlet* cmdlet, const struct nuts_getopts_option* option) {
+  if (cmdlet == NULL || option == NULL)
+    return NULL;
+
+  for (int i = 0; i < cmdlet->nopts; i++) {
+    if ((option->sname != 0 && cmdlet->opts[i].sname == option->sname) ||
+        (option->lname != NULL && strcmp(cmdlet->opts[i].lname, option->lname) == 0))
+      return &cmdlet->cmdlet_opts[i];
+  }
+
+  return nuts_getopts_cmdlet_find_option(cmdlet->parent, option);
+}
+
 #define _update_attr(cmdlet, attr, val) \
   do {                                                        \
     if (cmdlet->attr == NULL) {                               \
