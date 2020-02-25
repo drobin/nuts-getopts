@@ -56,8 +56,8 @@ static struct option_entry* option_entry_new(const struct nuts_getopts_option* o
 }
 
 static void option_entry_collect(const nuts_getopts_cmdlet* cmdlet, struct option_head* head) {
-  for (int i = 0; i < cmdlet->options.nopts; i++) {
-    struct option_entry* entry = option_entry_new(&cmdlet->options.opts[i], &cmdlet->options.copts[i]);
+  for (int i = 0; i < cmdlet->nopts; i++) {
+    struct option_entry* entry = option_entry_new(&cmdlet->opts[i], &cmdlet->cmdlet_opts[i]);
     SLIST_INSERT_HEAD(head, entry, entries);
   }
 

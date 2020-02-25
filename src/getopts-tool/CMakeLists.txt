@@ -32,8 +32,6 @@ add_library(nuts-getopts-tool STATIC
   help.h
   option.c
   option.h
-  option_list.c
-  option_list.h
   queue.h
   tool.c
   tool.h

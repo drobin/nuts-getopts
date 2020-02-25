@@ -25,8 +25,10 @@
 #ifndef NUTS_GETOPTS_TOOL_CMDLET_H
 #define NUTS_GETOPTS_TOOL_CMDLET_H
 
+#include <nuts-getopts.h>
+
 #include "nuts-getopts-tool.h"
-#include "option_list.h"
+#include "option.h"
 #include "queue.h"
 
 SLIST_HEAD(nuts_getopts_cmdlet_head, nuts_getopts_cmdlet_s);
@@ -37,7 +39,9 @@ struct nuts_getopts_cmdlet_s {
   char* syntax;
   char* sdescr;
   char* ldescr;
-  struct nuts_getopts_cmdlet_option_list options;
+  int nopts;
+  struct nuts_getopts_option* opts;
+  nuts_getopts_cmdlet_option* cmdlet_opts;
   struct nuts_getopts_option_group optgroup[3];
   struct nuts_getopts_cmdlet_head cmdlets;
   nuts_getopts_cmdlet_func func;

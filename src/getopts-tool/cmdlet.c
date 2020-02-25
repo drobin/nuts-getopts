@@ -38,6 +38,40 @@ static nuts_getopts_cmdlet* cmdlet_head_find(const struct nuts_getopts_cmdlet_he
   return NULL;
 }
 
+static int option_add(nuts_getopts_cmdlet* cmdlet, const char* lname, char sname, int /*nuts_getopts_argument_type*/ arg) {
+  const int n = cmdlet->nopts + 2;
+  struct nuts_getopts_option* opts = realloc(cmdlet->opts, n * sizeof(struct nuts_getopts_option));
+  char* opts_lname = (lname != NULL) ? malloc(strlen(lname) + 1) : NULL;
+
+  if ((opts == NULL) || ((lname != NULL) && (opts_lname == NULL))) {
+    free(opts);
+    free(opts_lname);
+    return -1;
+  }
+
+  opts[n - 2].sname = sname;
+  opts[n - 2].lname = (lname != NULL) ? strcpy(opts_lname, lname) : NULL;
+  opts[n - 2].arg = arg ? nuts_getopts_required_argument : nuts_getopts_no_argument;
+  memset(&opts[n - 1], 0, sizeof(struct nuts_getopts_option));
+
+  cmdlet->opts = opts;
+
+  return 0;
+}
+
+static nuts_getopts_cmdlet_option* cmdlet_option_add(nuts_getopts_cmdlet* cmdlet) {
+  const int n = cmdlet->nopts + 1;
+  nuts_getopts_cmdlet_option* new_cmdlet_opts = realloc(cmdlet->cmdlet_opts, n * sizeof(nuts_getopts_cmdlet_option));
+
+  if (new_cmdlet_opts == NULL)
+    return NULL;
+
+  nuts_getopts_cmdlet_option_init(&new_cmdlet_opts[cmdlet->nopts]);
+  cmdlet->cmdlet_opts = new_cmdlet_opts;
+
+  return &cmdlet->cmdlet_opts[cmdlet->nopts];
+}
+
 nuts_getopts_cmdlet* nuts_getopts_cmdlet_new_standalone(const nuts_getopts_cmdlet* parent, const char* action) {
   // parent = NULL for root-cmdlet
   if (action == NULL || *action == '\0')
@@ -91,7 +125,14 @@ void nuts_getopts_cmdlet_free(nuts_getopts_cmdlet* cmdlet) {
   free(cmdlet->syntax);
   free(cmdlet->sdescr);
   free(cmdlet->ldescr);
-  nuts_getopts_cmdlet_option_list_release(&cmdlet->options);
+
+  for (int i = 0; i < cmdlet->nopts; i++) {
+    free(cmdlet->opts[i].lname);
+    nuts_getopts_cmdlet_option_release(&cmdlet->cmdlet_opts[i]);
+  }
+
+  free(cmdlet->opts);
+  free(cmdlet->cmdlet_opts);
 
   while (!SLIST_EMPTY(&cmdlet->cmdlets)) {
     nuts_getopts_cmdlet* entry = SLIST_FIRST(&cmdlet->cmdlets);
@@ -156,11 +197,17 @@ nuts_getopts_cmdlet_option* nuts_getopts_cmdlet_add_option(nuts_getopts_cmdlet* 
   if (cmdlet == NULL || (lname == NULL && sname == 0))
     return NULL;
 
-  nuts_getopts_cmdlet_option* option = nuts_getopts_cmdlet_option_list_add(&cmdlet->options, lname, sname, arg);
+  nuts_getopts_cmdlet_option* option = NULL;
+
+  if (option_add(cmdlet, lname, sname, arg) == 0)
+    option = cmdlet_option_add(cmdlet);
 
   if (option != NULL) {
+    cmdlet->nopts++;
+
+    // re-link into option-group, pointer to options might have been changed
     int idx = (cmdlet->parent == NULL) ? 0 : 1;
-    cmdlet->optgroup[idx].list = cmdlet->options.opts;
+    cmdlet->optgroup[idx].list = cmdlet->opts;
   }
 
   return option;
