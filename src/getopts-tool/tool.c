@@ -101,6 +101,18 @@ static const struct nuts_getopts_event_entry* event_find_arg(const nuts_getopts_
   return NULL;
 }
 
+static struct nuts_getopts_converter_entry* converter_entry_new(int id, const struct nuts_getopts_converter* converter) {
+  struct nuts_getopts_converter_entry* entry = malloc(sizeof(struct nuts_getopts_converter_entry));
+
+  if (entry != NULL) {
+    memset(entry, 0, sizeof(struct nuts_getopts_converter_entry));
+    entry->id = id;
+    entry->conv = converter;
+  }
+
+  return entry;
+}
+
 static nuts_getopts_cmdlet* cmdlet_detect(nuts_getopts_tool* tool, int argc, char* argv[]) {
   nuts_getopts_state state = { 0 };
   struct nuts_getopts_event ev = { 0 };
@@ -163,6 +175,7 @@ nuts_getopts_tool* nuts_getopts_tool_new() {
 
   memset(tool, 0, sizeof(struct nuts_getopts_tool_s));
   tool->root = nuts_getopts_cmdlet_new_standalone(NULL, "root");
+  SLIST_INIT(&tool->conv_head);
   SLIST_INIT(&tool->ev_head);
 
   return tool;
@@ -172,6 +185,12 @@ void nuts_getopts_tool_free(nuts_getopts_tool* tool) {
   if (tool != NULL) {
     nuts_getopts_cmdlet_free(tool->root);
 
+    while (!SLIST_EMPTY(&tool->conv_head)) {
+      struct nuts_getopts_converter_entry* entry = SLIST_FIRST(&tool->conv_head);
+      SLIST_REMOVE_HEAD(&tool->conv_head, entries);
+      free(entry);
+    }
+
     while (!SLIST_EMPTY(&tool->ev_head)) {
       struct nuts_getopts_event_entry* entry = SLIST_FIRST(&tool->ev_head);
       SLIST_REMOVE_HEAD(&tool->ev_head, entries);
@@ -180,6 +199,18 @@ void nuts_getopts_tool_free(nuts_getopts_tool* tool) {
 
     free(tool);
   }
+}
+
+int nuts_getopts_tool_add_converter(nuts_getopts_tool* tool, int id, const struct nuts_getopts_converter* converter) {
+  struct nuts_getopts_converter_entry* entry = NULL;
+
+  if (tool != NULL && converter != NULL)
+    entry = converter_entry_new(id, converter);
+
+  if (entry != NULL)
+    SLIST_INSERT_HEAD(&tool->conv_head, entry, entries);
+
+  return (entry != NULL) ? 0 : -1;
 }
 
 nuts_getopts_cmdlet* nuts_getopts_tool_root_cmdlet(const nuts_getopts_tool* tool) {

@@ -36,10 +36,18 @@ typedef struct nuts_getopts_cmdlet_s nuts_getopts_cmdlet;
 typedef struct nuts_getopts_cmdlet_option_s nuts_getopts_cmdlet_option;
 typedef int (*nuts_getopts_cmdlet_func)(nuts_getopts_tool* tool);
 
+struct nuts_getopts_converter {
+  void* (*convert)(const char* str, int* ok);
+  void (*free)(void* value);
+};
+
 #define NUTS_GETOPTS_TOOL_RC_REQHELP (1 << 8)
 
 nuts_getopts_tool* nuts_getopts_tool_new();
 void nuts_getopts_tool_free(nuts_getopts_tool* tool);
+
+int nuts_getopts_tool_add_converter(nuts_getopts_tool* tool, int id, const struct nuts_getopts_converter* converter);
+
 nuts_getopts_cmdlet* nuts_getopts_tool_root_cmdlet(const nuts_getopts_tool* tool);
 void nuts_getopts_tool_enable_help(nuts_getopts_tool* tool);
 const char* nuts_getopts_tool_name(const nuts_getopts_tool* tool);

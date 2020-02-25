@@ -35,10 +35,18 @@ struct nuts_getopts_event_entry {
   SLIST_ENTRY(nuts_getopts_event_entry) entries;
 };
 
+struct  nuts_getopts_converter_entry {
+  int id;
+  const struct nuts_getopts_converter* conv;
+  SLIST_ENTRY(nuts_getopts_converter_entry) entries;
+};
+
 SLIST_HEAD(nuts_getopts_event_head, nuts_getopts_event_entry);
+SLIST_HEAD(nuts_getopts_converter_head, nuts_getopts_converter_entry);
 
 struct nuts_getopts_tool_s {
   nuts_getopts_cmdlet* root;
+  struct nuts_getopts_converter_head conv_head;
   struct nuts_getopts_event_head ev_head;
 };
 
