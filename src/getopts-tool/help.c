@@ -129,28 +129,24 @@ static void print_options(const struct option_head* head) {
   printf("\nOptions:\n\n");
 
   const struct option_entry* entry;
-  int max_lname_len = 0;
-  int max_arg_len = 0;
+  int max_len = 0;
 
   SLIST_FOREACH(entry, head, entries) {
     int lname_len = _strlen_null(entry->option->lname);
-
-    if (lname_len > max_lname_len)
-      max_lname_len = lname_len;
+    int arg_len = 0;
 
     if (entry->option->arg == nuts_getopts_required_argument) {
-      int len = _strlen_null(entry->copt->arg);
-
-      if (len == 0)
-        len = 3; // strlen("ARG")
-
-      if (len > max_arg_len)
-        max_arg_len = len;
+      arg_len = _strlen_null(entry->copt->arg);
+      if (arg_len == 0)
+        arg_len = 3; // strlen("ARG")
     }
+
+    if (lname_len + arg_len > max_len)
+      max_len = lname_len + arg_len;
   }
 
   SLIST_FOREACH(entry, head, entries) {
-    int pad = 0;
+    int len = 0;
 
     // (1) short option
     if (entry->option->sname != 0)
@@ -167,19 +163,19 @@ static void print_options(const struct option_head* head) {
     // (3) long option
     if (entry->option->lname != NULL)
       printf("--%s ", entry->option->lname);
-    pad += max_lname_len - _strlen_null(entry->option->lname);
+    len += _strlen_null(entry->option->lname);
 
     // (4) argument to option
-    if (entry->option->arg == nuts_getopts_required_argument)
-      printf("%s ", ((entry->copt->arg != NULL) ? entry->copt->arg : "ARG"));
-    else
-      pad += 1 + max_arg_len;
+    if (entry->option->arg == nuts_getopts_required_argument) {
+      printf("%s", ((entry->copt->arg != NULL) ? entry->copt->arg : "ARG"));
+      len += (entry->copt->arg != NULL) ? strlen(entry->copt->arg) : 3;
+    }
 
     // (5) Right-align everything
-    print_spaces(pad);
+    print_spaces(max_len - len);
 
     // (6) description
-    printf("%s\n", _print_null(entry->copt->descr));
+    printf(" %s\n", _print_null(entry->copt->descr));
   }
 }
 
