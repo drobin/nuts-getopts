@@ -34,6 +34,7 @@
 SLIST_HEAD(nuts_getopts_cmdlet_head, nuts_getopts_cmdlet_s);
 
 struct nuts_getopts_cmdlet_s {
+  const nuts_getopts_tool* tool;
   const nuts_getopts_cmdlet* parent;
   char* action;
   char* syntax;
@@ -48,7 +49,7 @@ struct nuts_getopts_cmdlet_s {
   SLIST_ENTRY(nuts_getopts_cmdlet_s) entries;
 };
 
-nuts_getopts_cmdlet* nuts_getopts_cmdlet_new_standalone(const nuts_getopts_cmdlet* parent, const char* action);
+nuts_getopts_cmdlet* nuts_getopts_cmdlet_new_standalone(const nuts_getopts_tool* tool, const nuts_getopts_cmdlet* parent, const char* action);
 void nuts_getopts_cmdlet_free(nuts_getopts_cmdlet* cmdlet);
 nuts_getopts_cmdlet* nuts_getopts_cmdlet_find(nuts_getopts_cmdlet* cmdlet, const char* action);
 int nuts_getopts_cmdlet_invoke(nuts_getopts_cmdlet* cmdlet, nuts_getopts_tool* tool);

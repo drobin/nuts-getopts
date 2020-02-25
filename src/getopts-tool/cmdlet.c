@@ -72,9 +72,9 @@ static nuts_getopts_cmdlet_option* cmdlet_option_add(nuts_getopts_cmdlet* cmdlet
   return &cmdlet->cmdlet_opts[cmdlet->nopts];
 }
 
-nuts_getopts_cmdlet* nuts_getopts_cmdlet_new_standalone(const nuts_getopts_cmdlet* parent, const char* action) {
+nuts_getopts_cmdlet* nuts_getopts_cmdlet_new_standalone(const nuts_getopts_tool* tool, const nuts_getopts_cmdlet* parent, const char* action) {
   // parent = NULL for root-cmdlet
-  if (action == NULL || *action == '\0')
+  if (tool == NULL || action == NULL || *action == '\0')
     return NULL;
 
   nuts_getopts_cmdlet* cmdlet;
@@ -90,6 +90,7 @@ nuts_getopts_cmdlet* nuts_getopts_cmdlet_new_standalone(const nuts_getopts_cmdle
   }
 
   memset(cmdlet, 0, sizeof(struct nuts_getopts_cmdlet_s));
+  cmdlet->tool = tool;
   cmdlet->parent = parent;
   cmdlet->action = strcpy(cmdlet_action, action);
   SLIST_INIT(&cmdlet->cmdlets);
@@ -109,7 +110,7 @@ nuts_getopts_cmdlet* nuts_getopts_cmdlet_new(nuts_getopts_cmdlet* cmdlet, const 
   if ((child = cmdlet_head_find(&cmdlet->cmdlets, action)) != NULL)
     return NULL; // already exists
 
-  if ((child = nuts_getopts_cmdlet_new_standalone(cmdlet, action)) == NULL)
+  if ((child = nuts_getopts_cmdlet_new_standalone(cmdlet->tool, cmdlet, action)) == NULL)
     return NULL;
 
   SLIST_INSERT_HEAD(&cmdlet->cmdlets, child, entries);

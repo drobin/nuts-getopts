@@ -174,7 +174,7 @@ nuts_getopts_tool* nuts_getopts_tool_new() {
     return NULL;
 
   memset(tool, 0, sizeof(struct nuts_getopts_tool_s));
-  tool->root = nuts_getopts_cmdlet_new_standalone(NULL, "root");
+  tool->root = nuts_getopts_cmdlet_new_standalone(tool, NULL, "root");
   SLIST_INIT(&tool->conv_head);
   SLIST_INIT(&tool->ev_head);
 
