@@ -50,4 +50,6 @@ struct nuts_getopts_tool_s {
   struct nuts_getopts_event_head ev_head;
 };
 
+const struct nuts_getopts_converter* nuts_getopts_tool_find_converter(const nuts_getopts_tool* tool, int id);
+
 #endif  /* NUTS_GETOPTS_TOOL_TOOL_H */

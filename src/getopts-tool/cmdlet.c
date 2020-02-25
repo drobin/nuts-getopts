@@ -26,6 +26,7 @@
 #include <string.h>
 
 #include "cmdlet.h"
+#include "tool.h"
 
 static nuts_getopts_cmdlet* cmdlet_head_find(const struct nuts_getopts_cmdlet_head* head, const char* action) {
   nuts_getopts_cmdlet* cmdlet;
@@ -59,14 +60,14 @@ static int option_add(nuts_getopts_cmdlet* cmdlet, const char* lname, char sname
   return 0;
 }
 
-static nuts_getopts_cmdlet_option* cmdlet_option_add(nuts_getopts_cmdlet* cmdlet) {
+static nuts_getopts_cmdlet_option* cmdlet_option_add(nuts_getopts_cmdlet* cmdlet, int arg) {
   const int n = cmdlet->nopts + 1;
   nuts_getopts_cmdlet_option* new_cmdlet_opts = realloc(cmdlet->cmdlet_opts, n * sizeof(nuts_getopts_cmdlet_option));
 
   if (new_cmdlet_opts == NULL)
     return NULL;
 
-  nuts_getopts_cmdlet_option_init(&new_cmdlet_opts[cmdlet->nopts]);
+  nuts_getopts_cmdlet_option_init(&new_cmdlet_opts[cmdlet->nopts], arg);
   cmdlet->cmdlet_opts = new_cmdlet_opts;
 
   return &cmdlet->cmdlet_opts[cmdlet->nopts];
@@ -201,7 +202,7 @@ nuts_getopts_cmdlet_option* nuts_getopts_cmdlet_add_option(nuts_getopts_cmdlet* 
   nuts_getopts_cmdlet_option* option = NULL;
 
   if (option_add(cmdlet, lname, sname, arg) == 0)
-    option = cmdlet_option_add(cmdlet);
+    option = cmdlet_option_add(cmdlet, arg);
 
   if (option != NULL) {
     cmdlet->nopts++;

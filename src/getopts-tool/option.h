@@ -28,11 +28,12 @@
 #include "nuts-getopts-tool.h"
 
 struct nuts_getopts_cmdlet_option_s {
+  int conv_id;
   char* descr;
   char* arg;
 };
 
-void nuts_getopts_cmdlet_option_init(nuts_getopts_cmdlet_option* option);
+void nuts_getopts_cmdlet_option_init(nuts_getopts_cmdlet_option* option, int conv_id);
 void nuts_getopts_cmdlet_option_release(nuts_getopts_cmdlet_option* option);
 
 

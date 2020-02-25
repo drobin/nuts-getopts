@@ -213,6 +213,17 @@ int nuts_getopts_tool_add_converter(nuts_getopts_tool* tool, int id, const struc
   return (entry != NULL) ? 0 : -1;
 }
 
+const struct nuts_getopts_converter* nuts_getopts_tool_find_converter(const nuts_getopts_tool* tool, int id) {
+  struct nuts_getopts_converter_entry* entry = NULL;
+
+  SLIST_FOREACH(entry, &tool->conv_head, entries) {
+    if (entry->id == id)
+      return entry->conv;
+  }
+
+  return NULL;
+}
+
 nuts_getopts_cmdlet* nuts_getopts_tool_root_cmdlet(const nuts_getopts_tool* tool) {
   return (tool != NULL) ? tool->root : NULL;
 }

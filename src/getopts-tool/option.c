@@ -27,9 +27,11 @@
 
 #include "option.h"
 
-void nuts_getopts_cmdlet_option_init(nuts_getopts_cmdlet_option* option) {
-  if (option != NULL)
+void nuts_getopts_cmdlet_option_init(nuts_getopts_cmdlet_option* option, int conv_id) {
+  if (option != NULL) {
     memset(option, 0, sizeof(struct nuts_getopts_cmdlet_option_s));
+    option->conv_id = conv_id;
+  }
 }
 
 void nuts_getopts_cmdlet_option_release(nuts_getopts_cmdlet_option* option) {
