@@ -34,7 +34,7 @@ struct nuts_getopts_event_entry {
   struct nuts_getopts_event ev;
   const struct nuts_getopts_converter* converter;
   void* value;
-  SLIST_ENTRY(nuts_getopts_event_entry) entries;
+  SIMPLEQ_ENTRY(nuts_getopts_event_entry) entries;
 };
 
 struct  nuts_getopts_converter_entry {
@@ -43,7 +43,7 @@ struct  nuts_getopts_converter_entry {
   SLIST_ENTRY(nuts_getopts_converter_entry) entries;
 };
 
-SLIST_HEAD(nuts_getopts_event_head, nuts_getopts_event_entry);
+SIMPLEQ_HEAD(nuts_getopts_event_head, nuts_getopts_event_entry);
 SLIST_HEAD(nuts_getopts_converter_head, nuts_getopts_converter_entry);
 
 struct nuts_getopts_tool_s {

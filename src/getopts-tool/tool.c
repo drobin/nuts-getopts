@@ -62,7 +62,7 @@ static struct nuts_getopts_event_entry* event_new(nuts_getopts_tool* tool) {
 
   if (entry != NULL) {
     memset(entry, 0, sizeof(struct nuts_getopts_event_entry));
-    SLIST_INSERT_HEAD(&tool->ev_head, entry, entries);
+    SIMPLEQ_INSERT_TAIL(&tool->ev_head, entry, entries);
   }
 
   return entry;
@@ -82,7 +82,7 @@ static void event_free(struct nuts_getopts_event_entry* entry) {
 static const struct nuts_getopts_event_entry* event_find_tool(const nuts_getopts_tool* tool) {
   const struct nuts_getopts_event_entry* entry;
 
-  SLIST_FOREACH(entry, &tool->ev_head, entries) {
+  SIMPLEQ_FOREACH(entry, &tool->ev_head, entries) {
     if (entry->ev.type == nuts_getopts_tool_event)
       return entry;
   }
@@ -94,7 +94,7 @@ static const struct nuts_getopts_event_entry* event_find_option(const nuts_getop
   const struct nuts_getopts_event_entry* entry;
   const size_t len = (name != NULL) ? strlen(name) : 0;
 
-  SLIST_FOREACH(entry, &tool->ev_head, entries) {
+  SIMPLEQ_FOREACH(entry, &tool->ev_head, entries) {
     if (entry->ev.type == nuts_getopts_option_event) {
       const struct nuts_getopts_option* option = entry->ev.u.opt.option;
 
@@ -111,7 +111,7 @@ static const struct nuts_getopts_event_entry* event_find_arg(const nuts_getopts_
   const struct nuts_getopts_event_entry* entry;
   int aidx = 0;
 
-  SLIST_FOREACH(entry, &tool->ev_head, entries) {
+  SIMPLEQ_FOREACH(entry, &tool->ev_head, entries) {
     if (entry->ev.type == nuts_getopts_argument_event) {
       if (aidx == idx)
         return entry;
@@ -215,7 +215,7 @@ nuts_getopts_tool* nuts_getopts_tool_new() {
   memset(tool, 0, sizeof(struct nuts_getopts_tool_s));
   tool->root = nuts_getopts_cmdlet_new_standalone(tool, NULL, "root");
   SLIST_INIT(&tool->conv_head);
-  SLIST_INIT(&tool->ev_head);
+  SIMPLEQ_INIT(&tool->ev_head);
 
   nuts_getopts_tool_add_converter(tool, nuts_getopts_tool_string_arg, nuts_getopts_string_converter());
   nuts_getopts_tool_add_converter(tool, nuts_getopts_tool_int_arg, nuts_getopts_int_converter());
@@ -228,9 +228,9 @@ void nuts_getopts_tool_free(nuts_getopts_tool* tool) {
   if (tool != NULL) {
     nuts_getopts_cmdlet_free(tool->root);
 
-    while (!SLIST_EMPTY(&tool->ev_head)) {
-      struct nuts_getopts_event_entry* entry = SLIST_FIRST(&tool->ev_head);
-      SLIST_REMOVE_HEAD(&tool->ev_head, entries);
+    while (!SIMPLEQ_EMPTY(&tool->ev_head)) {
+      struct nuts_getopts_event_entry* entry = SIMPLEQ_FIRST(&tool->ev_head);
+      SIMPLEQ_REMOVE_HEAD(&tool->ev_head, entries);
       event_free(entry);
     }
 
