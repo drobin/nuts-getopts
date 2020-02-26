@@ -38,10 +38,10 @@
 struct option_entry {
   const struct nuts_getopts_option* option;
   const nuts_getopts_cmdlet_option* copt;
-  SLIST_ENTRY(option_entry) entries;
+  SIMPLEQ_ENTRY(option_entry) entries;
 };
 
-SLIST_HEAD(option_head, option_entry);
+SIMPLEQ_HEAD(option_head, option_entry);
 
 static struct option_entry* option_entry_new(const struct nuts_getopts_option* option, const nuts_getopts_cmdlet_option* copt) {
   struct option_entry* entry = malloc(sizeof(struct option_entry));
@@ -59,7 +59,7 @@ static struct option_entry* option_entry_new(const struct nuts_getopts_option* o
 static void option_entry_collect(const nuts_getopts_cmdlet* cmdlet, struct option_head* head) {
   for (int i = 0; i < cmdlet->nopts; i++) {
     struct option_entry* entry = option_entry_new(&cmdlet->opts[i], &cmdlet->cmdlet_opts[i]);
-    SLIST_INSERT_HEAD(head, entry, entries);
+    SIMPLEQ_INSERT_TAIL(head, entry, entries);
   }
 
   if (cmdlet->parent != NULL)
@@ -67,9 +67,9 @@ static void option_entry_collect(const nuts_getopts_cmdlet* cmdlet, struct optio
 }
 
 static void option_entry_free(struct option_head* head) {
-  while (!SLIST_EMPTY(head)) {
-    struct option_entry* entry = SLIST_FIRST(head);
-    SLIST_REMOVE_HEAD(head, entries);
+  while (!SIMPLEQ_EMPTY(head)) {
+    struct option_entry* entry = SIMPLEQ_FIRST(head);
+    SIMPLEQ_REMOVE_HEAD(head, entries);
     free(entry);
   }
 }
@@ -167,7 +167,7 @@ static void print_options(const struct option_head* head) {
   const struct option_entry* entry;
   int max_len = 0;
 
-  SLIST_FOREACH(entry, head, entries) {
+  SIMPLEQ_FOREACH(entry, head, entries) {
     int lname_len = _strlen_null(entry->option->lname);
     int arg_len = 0;
 
@@ -181,7 +181,7 @@ static void print_options(const struct option_head* head) {
       max_len = lname_len + arg_len;
   }
 
-  SLIST_FOREACH(entry, head, entries) {
+  SIMPLEQ_FOREACH(entry, head, entries) {
     int len = 0;
 
     // (1) short option
@@ -247,7 +247,7 @@ int nuts_getopts_help(nuts_getopts_tool* tool) {
   }
 
   const nuts_getopts_cmdlet* cmdlet = cmdlet_detect(tool, tool->root, idx);
-  struct option_head optshead = SLIST_HEAD_INITIALIZER(optshead);
+  struct option_head optshead = SIMPLEQ_HEAD_INITIALIZER(optshead);
 
   option_entry_collect(cmdlet, &optshead);
 
