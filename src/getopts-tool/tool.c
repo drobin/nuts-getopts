@@ -299,15 +299,6 @@ const char* nuts_getopts_tool_argument(const nuts_getopts_tool* tool, int idx) {
     return NULL;
 }
 
-const char* nuts_getopts_tool_value_str(const nuts_getopts_tool* tool, const char* name) {
-  const struct nuts_getopts_event_entry* ev_entry = NULL;
-
-  if (tool != NULL && name != NULL)
-    ev_entry = event_find_option(tool, name);
-
-  return (ev_entry != NULL) ? ev_entry->ev.u.opt.value : NULL;
-}
-
 const void* nuts_getopts_tool_value(const nuts_getopts_tool* tool, const char* name) {
   const struct nuts_getopts_event_entry* ev_entry = NULL;
 
@@ -315,6 +306,20 @@ const void* nuts_getopts_tool_value(const nuts_getopts_tool* tool, const char* n
     ev_entry = event_find_option(tool, name);
 
   return (ev_entry != NULL) ? ev_entry->value : NULL;
+}
+
+long nuts_getopts_tool_lvalue(const nuts_getopts_tool* tool, const char* name, long def) {
+  const void* value = nuts_getopts_tool_value(tool, name);
+  return (value != NULL) ? *(long*)value : def;
+}
+
+const char* nuts_getopts_tool_svalue(const nuts_getopts_tool* tool, const char* name) {
+  const struct nuts_getopts_event_entry* ev_entry = NULL;
+
+  if (tool != NULL && name != NULL)
+    ev_entry = event_find_option(tool, name);
+
+  return (ev_entry != NULL) ? ev_entry->ev.u.opt.value : NULL;
 }
 
 int nuts_getopts_tool_is_set(const nuts_getopts_tool* tool, const char* name) {
