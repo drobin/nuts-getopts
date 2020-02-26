@@ -22,6 +22,7 @@
  * SOFTWARE.
  *****************************************************************************/
 
+#include <ctype.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
@@ -78,6 +79,41 @@ static void print_spaces(int n) {
 
   memset(space, ' ', n);
   printf("%.*s", n, space);
+}
+
+static const char* skip_ws(const char* str) {
+  const char* p = str;
+
+  while (isspace(*p) && *p != '\0')
+    p++;
+
+  return p;
+}
+
+static int find_ws(const char* str, int max) {
+  int len = max;
+
+  for (; len >= 0; len--) {
+    if (isspace(str[len]))
+      break;;
+  }
+
+  return len;
+}
+
+static void println(const char* str, int max, int lpad1, int ldap2) {
+  const char* p = skip_ws(str);
+
+  if (strlen(p) > max) {
+    int len = find_ws(p, max);
+    print_spaces(lpad1);
+    printf("%.*s\n", len, p);
+    println(p + len, max, ldap2, ldap2);
+  }
+  else {
+    print_spaces(lpad1);
+    printf("%s\n", p);
+  }
 }
 
 static void print_syntax(const nuts_getopts_tool* tool, const nuts_getopts_cmdlet* cmdlet) {
@@ -172,10 +208,10 @@ static void print_options(const struct option_head* head) {
     }
 
     // (5) Right-align everything
-    print_spaces(max_len - len);
+    print_spaces(max_len - len + 1);
 
     // (6) description
-    printf(" %s\n", _print_null(entry->copt->descr));
+    println(_print_null(entry->copt->descr), 80 - max_len - 8, 0, max_len + 9);
   }
 }
 
