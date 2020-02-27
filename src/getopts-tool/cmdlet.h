@@ -31,7 +31,7 @@
 #include "option.h"
 #include "queue.h"
 
-SLIST_HEAD(nuts_getopts_cmdlet_head, nuts_getopts_cmdlet_s);
+SIMPLEQ_HEAD(nuts_getopts_cmdlet_head, nuts_getopts_cmdlet_s);
 
 struct nuts_getopts_cmdlet_s {
   const nuts_getopts_tool* tool;
@@ -46,7 +46,7 @@ struct nuts_getopts_cmdlet_s {
   struct nuts_getopts_option_group optgroup[3];
   struct nuts_getopts_cmdlet_head cmdlets;
   nuts_getopts_cmdlet_func func;
-  SLIST_ENTRY(nuts_getopts_cmdlet_s) entries;
+  SIMPLEQ_ENTRY(nuts_getopts_cmdlet_s) entries;
 };
 
 nuts_getopts_cmdlet* nuts_getopts_cmdlet_new_standalone(const nuts_getopts_tool* tool, const nuts_getopts_cmdlet* parent, const char* action);

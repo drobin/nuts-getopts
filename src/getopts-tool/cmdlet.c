@@ -31,7 +31,7 @@
 static nuts_getopts_cmdlet* cmdlet_head_find(const struct nuts_getopts_cmdlet_head* head, const char* action) {
   nuts_getopts_cmdlet* cmdlet;
 
-  SLIST_FOREACH(cmdlet, head, entries) {
+  SIMPLEQ_FOREACH(cmdlet, head, entries) {
     if (strcmp(cmdlet->action, action) == 0)
       return cmdlet;
   }
@@ -94,7 +94,7 @@ nuts_getopts_cmdlet* nuts_getopts_cmdlet_new_standalone(const nuts_getopts_tool*
   cmdlet->tool = tool;
   cmdlet->parent = parent;
   cmdlet->action = strcpy(cmdlet_action, action);
-  SLIST_INIT(&cmdlet->cmdlets);
+  SIMPLEQ_INIT(&cmdlet->cmdlets);
 
   if (parent != NULL)
     cmdlet->optgroup[0].group = parent->optgroup;
@@ -114,7 +114,7 @@ nuts_getopts_cmdlet* nuts_getopts_cmdlet_new(nuts_getopts_cmdlet* cmdlet, const 
   if ((child = nuts_getopts_cmdlet_new_standalone(cmdlet->tool, cmdlet, action)) == NULL)
     return NULL;
 
-  SLIST_INSERT_HEAD(&cmdlet->cmdlets, child, entries);
+  SIMPLEQ_INSERT_TAIL(&cmdlet->cmdlets, child, entries);
 
   return child;
 }
@@ -136,9 +136,9 @@ void nuts_getopts_cmdlet_free(nuts_getopts_cmdlet* cmdlet) {
   free(cmdlet->opts);
   free(cmdlet->cmdlet_opts);
 
-  while (!SLIST_EMPTY(&cmdlet->cmdlets)) {
-    nuts_getopts_cmdlet* entry = SLIST_FIRST(&cmdlet->cmdlets);
-    SLIST_REMOVE_HEAD(&cmdlet->cmdlets, entries);
+  while (!SIMPLEQ_EMPTY(&cmdlet->cmdlets)) {
+    nuts_getopts_cmdlet* entry = SIMPLEQ_FIRST(&cmdlet->cmdlets);
+    SIMPLEQ_REMOVE_HEAD(&cmdlet->cmdlets, entries);
     nuts_getopts_cmdlet_free(entry);
   }
 

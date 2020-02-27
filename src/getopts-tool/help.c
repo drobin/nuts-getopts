@@ -137,13 +137,13 @@ static void print_descr(const nuts_getopts_cmdlet* cmdlet) {
 }
 
 static void print_actions(const nuts_getopts_cmdlet* cmdlet) {
-  if (SLIST_EMPTY(&cmdlet->cmdlets))
+  if (SIMPLEQ_EMPTY(&cmdlet->cmdlets))
     return;
 
   const nuts_getopts_cmdlet* cur;
   int max_len = 0;
 
-  SLIST_FOREACH(cur, &cmdlet->cmdlets, entries) {
+  SIMPLEQ_FOREACH(cur, &cmdlet->cmdlets, entries) {
     int len = strlen(cur->action);
     if (len > max_len)
       max_len = len;
@@ -151,7 +151,7 @@ static void print_actions(const nuts_getopts_cmdlet* cmdlet) {
 
   printf("\nActions:\n\n");
 
-  SLIST_FOREACH(cur, &cmdlet->cmdlets, entries) {
+  SIMPLEQ_FOREACH(cur, &cmdlet->cmdlets, entries) {
     if (cur->sdescr != NULL) {
       printf(" %s", cur->action);
       print_spaces(max_len - strlen(cur->action));
@@ -218,7 +218,7 @@ static void print_options(const struct option_head* head) {
 static const nuts_getopts_cmdlet* cmdlet_detect(nuts_getopts_tool* tool, const nuts_getopts_cmdlet* parent, int idx) {
   const nuts_getopts_cmdlet* cur;
 
-  SLIST_FOREACH(cur, &parent->cmdlets, entries) {
+  SIMPLEQ_FOREACH(cur, &parent->cmdlets, entries) {
     const char* arg = nuts_getopts_tool_argument(tool, idx);
 
     if (arg == NULL)
