@@ -75,7 +75,7 @@ static const struct nuts_getopts_option* find_option(const struct nuts_getopts_o
 
       while (!_list_eof(option)) {
         if ((sname != 0 && option->sname == sname) ||
-            (lname != NULL && strncmp(option->lname, lname, lname_len) == 0))
+            (lname != NULL && option->lname != NULL && strncmp(option->lname, lname, lname_len) == 0))
           return option;
         option++;
       }
