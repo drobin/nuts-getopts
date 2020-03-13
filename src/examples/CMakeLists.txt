@@ -22,6 +22,14 @@
 # SOFTWARE.
 ##
 
-add_subdirectory(getopts)
-add_subdirectory(getopts-tool)
-add_subdirectory(examples)
+add_executable(nuts-getopts-example
+  getopts.c
+)
+
+target_link_libraries(nuts-getopts-example
+  nuts-getopts
+)
+
+include_directories(
+  ${PROJECT_SOURCE_DIR}/src/getopts
+)
