@@ -22,6 +22,12 @@
  * SOFTWARE.
  *****************************************************************************/
 
+/**
+ * @example getopts.c
+ *
+ * This is an example of how to use the _nuts-getopts_ library.
+ */
+
 #include <stdlib.h>
 #include <stdio.h>
 
