@@ -113,9 +113,9 @@ extern "C" {
  *
  * ## General usage
  *
- * The function nuts_getopts() should run in a loop until `-1` is returned. If
- * the return value is `-1` all command line arguments were parsed. It requires
- * the following arguments:
+ * The function nuts_getopts() and nuts_getopts_group() should run in a loop
+ * until `-1` is returned. If the return value is `-1` all command line
+ * arguments were parsed. It requires the following arguments:
  *
  * ### `options`
  *
@@ -137,6 +137,21 @@ extern "C" {
  * };
  * @endcode
  *
+ * ### `groups`
+ *
+ * The function nuts_getopts_group() uses the nuts_getopts_option_group
+ * structure to configure its options. With an option group you can put
+ * several option arrays together.
+ *
+ * Putting nuts_getopts_option structures together over the
+ * nuts_getopts_option_group#list member creates a linear list of options.
+ * You can also put option groups into an nuts_getopts_option_group element by
+ * using the nuts_getopts_option_group#group member. So you can create a tree
+ * of options.
+ *
+ * The advantage in using option groups is, that you can configure options
+ * depending on some external state.
+ *
  * ### `flags`
  *
  * Flags passed to the parser.
@@ -156,7 +171,8 @@ extern "C" {
  *
  * ## Example
  *
- * {@link getopts.c This} is an example of how to use the _nuts-getopts_ library.
+ * * {@link getopts.c} is an example of how to use nuts_getopts().
+ * * {@link getopts_group.c} is an example of how to use nuts_getopts_group().
  */
 
 /**
@@ -270,8 +286,24 @@ struct nuts_getopts_option {
   nuts_getopts_argument_type arg;
 };
 
+/**
+ * Defines an option-group.
+ *
+ * Combine several options into a list or tree of options.
+ */
 struct nuts_getopts_option_group {
+  /**
+   * The current option-group element references an option-group array.
+   *
+   * This creates a tree of options.
+   */
   const struct nuts_getopts_option_group* group;
+
+  /**
+   * The current option-group element references an option array.
+   *
+   * This creates a list of options.
+   */
   const struct nuts_getopts_option* list;
 };
 
@@ -398,7 +430,37 @@ typedef struct {
  */
 int nuts_getopts(int argc, char* argv[], const struct nuts_getopts_option* options, int flags, nuts_getopts_state* state, struct nuts_getopts_event* event);
 
-int nuts_getopts_group(int argc, char* argv[], const struct nuts_getopts_option_group* options, int flags, nuts_getopts_state* state, struct nuts_getopts_event* event);
+/**
+ * Calls the _nuts-getopts_ parser (with grouped options).
+ *
+ * Parses the command line arguments `argc`/`argv` and generates an event placed in the `event` argument.
+ * The event contains the option, argument, ... which was detected.
+ *
+ * @param argc Number of arguments in `argv`.
+ * @param argv Command line arguments to be parsed.
+ * @param groups Array with option groups, which can be detected by the parser. The
+ *               last entry of the array must contain only zeros. Passing
+ *               `NULL` to `groups` is a convenient value for an empty array
+ *               (no options).
+ * @param flags Flags, which controls the parser. Multiple flags are OR'ed
+ *              together. See #nuts_getopts_flag for a list of supported flags.
+ *              If no flags should be specified, `0` must be specified here.
+ * @param state The state of the parser. The nuts_getopts_state instance has to
+ *              filled with zeroes before the first invocation of
+ *              nuts_getopts_group(). Don't touch the state afterwards,
+ *              nuts_getopts_group() stores its internal state in the variable.
+ * @param event The parser stores the next event in this variable. You only
+ *              need to read the variable after a successful
+ *              nuts_getopts_group() invocation. The parser will re-initialize
+ *              its content with each invation of nuts_getopts_group().
+ * @return The function returns
+ *         * `0`: Another event was generated and placed into the `event`
+ *                argument. Another nuts_getopts_group() invocation is required
+ *                to parse the next component.
+ *         * `-1`: All command line arguments were parsed. No further
+ *                 nuts_getopts_group() invocations are required.
+ */
+int nuts_getopts_group(int argc, char* argv[], const struct nuts_getopts_option_group* groups, int flags, nuts_getopts_state* state, struct nuts_getopts_event* event);
 
 #ifdef __cplusplus
 }
