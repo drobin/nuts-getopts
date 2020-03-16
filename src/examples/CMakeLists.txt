@@ -30,6 +30,14 @@ target_link_libraries(nuts-getopts-example
   nuts-getopts
 )
 
+add_executable(nuts-getopts-group-example
+  getopts_group.c
+)
+
+target_link_libraries(nuts-getopts-group-example
+  nuts-getopts
+)
+
 include_directories(
   ${PROJECT_SOURCE_DIR}/src/getopts
 )
