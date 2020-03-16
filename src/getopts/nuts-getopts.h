@@ -255,7 +255,7 @@ typedef enum {
    * entry.
    */
   nuts_getopts_ignore_unknown_options = 0x01
-} nuts_getopts_flag;
+} nuts_getopts_flags;
 
 /**
  * Defines an option.
@@ -411,8 +411,9 @@ typedef struct {
  *                `NULL` to `options` is a convenient value for an empty array
  *                (no options).
  * @param flags Flags, which controls the parser. Multiple flags are OR'ed
- *              together. See #nuts_getopts_flag for a list of supported flags.
- *              If no flags should be specified, `0` must be specified here.
+ *              together. See #nuts_getopts_flags for a list of supported
+ *              flags. If no flags should be specified, `0` must be specified
+ *              here.
  * @param state The state of the parser. The nuts_getopts_state instance has to
  *              filled with zeroes before the first invocation of
  *              nuts_getopts(). Don't touch the state afterwards,
@@ -443,8 +444,9 @@ int nuts_getopts(int argc, char* argv[], const struct nuts_getopts_option* optio
  *               `NULL` to `groups` is a convenient value for an empty array
  *               (no options).
  * @param flags Flags, which controls the parser. Multiple flags are OR'ed
- *              together. See #nuts_getopts_flag for a list of supported flags.
- *              If no flags should be specified, `0` must be specified here.
+ *              together. See #nuts_getopts_flags for a list of supported
+ *              flags. If no flags should be specified, `0` must be specified
+ *              here.
  * @param state The state of the parser. The nuts_getopts_state instance has to
  *              filled with zeroes before the first invocation of
  *              nuts_getopts_group(). Don't touch the state afterwards,

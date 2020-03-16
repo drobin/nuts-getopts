@@ -38,7 +38,7 @@ static inline int is_longopt(const char* str) {
   return (str[0] == '-') && (str[1] == '-') && (str[2] != '\0');
 }
 
-static inline int has_flag(int flags, nuts_getopts_flag flag) {
+static inline int has_flag(int flags, int flag) {
   return ((flags & flag) > 0);
 }
 
