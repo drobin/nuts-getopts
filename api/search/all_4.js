@@ -1,0 +1,26 @@
+var searchData=
+[
+  ['nuts_2dgetopts_2dtool_2eh_5',['nuts-getopts-tool.h',['../nuts-getopts-tool_8h.html',1,'']]],
+  ['nuts_2dgetopts_2eh_6',['nuts-getopts.h',['../nuts-getopts_8h.html',1,'']]],
+  ['nuts_5fgetopts_7',['nuts_getopts',['../nuts-getopts_8h.html#ad9b9bfa74332b4b583017121509cf266',1,'nuts-getopts.h']]],
+  ['nuts_5fgetopts_5fargument_5fevent_8',['nuts_getopts_argument_event',['../nuts-getopts_8h.html#abe09983691a0f290bc01e07d483c8295a7415f5af438ff1b217b96cef65530f8e',1,'nuts-getopts.h']]],
+  ['nuts_5fgetopts_5fargument_5ftype_9',['nuts_getopts_argument_type',['../nuts-getopts_8h.html#af404624f72acce882e671b76be2f3174',1,'nuts-getopts.h']]],
+  ['nuts_5fgetopts_5fconverter_10',['nuts_getopts_converter',['../structnuts__getopts__converter.html',1,'']]],
+  ['nuts_5fgetopts_5ferror_5fevent_11',['nuts_getopts_error_event',['../nuts-getopts_8h.html#abe09983691a0f290bc01e07d483c8295a177dce79619a233a4b2799e3e0032926',1,'nuts-getopts.h']]],
+  ['nuts_5fgetopts_5ferror_5ftype_12',['nuts_getopts_error_type',['../nuts-getopts_8h.html#ada86f657f26bac2ae7285c03bc24f7c8',1,'nuts-getopts.h']]],
+  ['nuts_5fgetopts_5fevent_13',['nuts_getopts_event',['../structnuts__getopts__event.html',1,'']]],
+  ['nuts_5fgetopts_5fevent_5ftype_14',['nuts_getopts_event_type',['../nuts-getopts_8h.html#abe09983691a0f290bc01e07d483c8295',1,'nuts-getopts.h']]],
+  ['nuts_5fgetopts_5fflags_15',['nuts_getopts_flags',['../nuts-getopts_8h.html#ab3790018458c4b62d0e8d2f7e69725ca',1,'nuts-getopts.h']]],
+  ['nuts_5fgetopts_5fgroup_16',['nuts_getopts_group',['../nuts-getopts_8h.html#a9de9fb0b29a550196b3bdb69df3bbf18',1,'nuts-getopts.h']]],
+  ['nuts_5fgetopts_5fignore_5funknown_5foptions_17',['nuts_getopts_ignore_unknown_options',['../nuts-getopts_8h.html#ab3790018458c4b62d0e8d2f7e69725caa3476a37ec44448d31baa46c1331271ff',1,'nuts-getopts.h']]],
+  ['nuts_5fgetopts_5finvalid_5foption_18',['nuts_getopts_invalid_option',['../nuts-getopts_8h.html#ada86f657f26bac2ae7285c03bc24f7c8a7e7c57293c379e39d9ed489b2d45ca80',1,'nuts-getopts.h']]],
+  ['nuts_5fgetopts_5fmissing_5fvalue_19',['nuts_getopts_missing_value',['../nuts-getopts_8h.html#ada86f657f26bac2ae7285c03bc24f7c8a13157d54d0a907cc40ab9a97d7d24d9b',1,'nuts-getopts.h']]],
+  ['nuts_5fgetopts_5fneedless_5fvalue_20',['nuts_getopts_needless_value',['../nuts-getopts_8h.html#ada86f657f26bac2ae7285c03bc24f7c8aacdaa9d94f289fbe1f420df958e86263',1,'nuts-getopts.h']]],
+  ['nuts_5fgetopts_5fno_5fargument_21',['nuts_getopts_no_argument',['../nuts-getopts_8h.html#af404624f72acce882e671b76be2f3174ae8b0621702bb2a7af1c57079dd3b18e4',1,'nuts-getopts.h']]],
+  ['nuts_5fgetopts_5foption_22',['nuts_getopts_option',['../structnuts__getopts__option.html',1,'']]],
+  ['nuts_5fgetopts_5foption_5fevent_23',['nuts_getopts_option_event',['../nuts-getopts_8h.html#abe09983691a0f290bc01e07d483c8295a51664382ba6920486f92e33e3accfd37',1,'nuts-getopts.h']]],
+  ['nuts_5fgetopts_5foption_5fgroup_24',['nuts_getopts_option_group',['../structnuts__getopts__option__group.html',1,'']]],
+  ['nuts_5fgetopts_5frequired_5fargument_25',['nuts_getopts_required_argument',['../nuts-getopts_8h.html#af404624f72acce882e671b76be2f3174ae37fb9c5d1464b0a351d51a7fda9c073',1,'nuts-getopts.h']]],
+  ['nuts_5fgetopts_5fstate_26',['nuts_getopts_state',['../structnuts__getopts__state.html',1,'']]],
+  ['nuts_5fgetopts_5ftool_5fevent_27',['nuts_getopts_tool_event',['../nuts-getopts_8h.html#abe09983691a0f290bc01e07d483c8295a54e762dfbf9787ff17005fc6039d1535',1,'nuts-getopts.h']]]
+];
