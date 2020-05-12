@@ -1,0 +1,77 @@
+## nuts-getopts API
+
+### Enumerations
+<% select(:enums).each do |enum| %>
+
+#### <%= enum.name %>
+
+```
+enum <%= enum.name %> {
+  <%= enum.enumvalue.map(&:name).join(",\n  ") %>
+};
+```
+
+<%= enum.briefdescription %>
+
+
+<%= enum.detaileddescription %>
+
+
+<% enum.enumvalue.each do |value| %>
+| `<%= value.name %>` | <%= value.briefdescription %> |
+<% end %>
+
+<% end %>
+
+### Data types
+<% select(:structs).select(&:typedef?).each do |struct| %>
+
+#### <%= struct.name %>
+
+```
+<%= struct.name %>
+
+```
+
+<%= struct.briefdescription %>
+
+
+<%= struct.detaileddescription %>
+
+<% end %>
+
+### Data structures
+<% select(:structs).reject(&:typedef?).each do |struct| %>
+
+#### <%= struct.name %>
+
+```
+struct <%= struct.name %> {
+  <%= struct.member.map{ |m| "#{m.type} #{m.name};" }.join("\n  ") %>
+};
+```
+
+<%= struct.briefdescription %>
+
+
+<%= struct.detaileddescription %>
+
+<% end %>
+
+### Functions
+<% select(:functions).each do |func| %>
+
+#### <%= func.name %>()
+
+```
+<%= func.definition %>(
+  <%= func.param.map{|p| "#{p.type} #{p.declname}#{p.array}" }.join(",\n  ") %>
+);
+```
+
+<%= func.briefdescription %>
+
+
+<%= func.detaileddescription%>
+
+<% end %>

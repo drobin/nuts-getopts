@@ -1,11 +1,24 @@
 require_relative './erb_to_md'
+require_relative './xml_to_md'
+
+PROJECT_ROOT = ENV["PROJECT_ROOT"]
+BUILD_ROOT   = ENV["BUILD_ROOT"]
+
+raise "missing PROJECT_ROOT" if PROJECT_ROOT.nil?
+raise "missing BUILD_ROOT" if BUILD_ROOT.nil?
+raise "no such directory: #{PROJECT_ROOT}" unless File.directory?(PROJECT_ROOT)
+raise "no such directory: #{BUILD_ROOT}" unless File.directory?(BUILD_ROOT)
 
 ERB2MD_FILES = %w(
   nuts-getopts/index.md
 )
 
+XML_FILES = {
+  "nuts-getopts/api.md" => [ "#{BUILD_ROOT}/docs/xml/group__nuts-getopts.xml", "nuts-getopts/api.md.erb" ]
+}
+
 GITHUB_FILES = {
-  "../README.md" => "nuts-getopts/index.md.erb"
+  "#{PROJECT_ROOT}/README.md" => "nuts-getopts/index.md.erb"
 }
 
 def erb2md(source, target, github)
@@ -14,9 +27,22 @@ def erb2md(source, target, github)
   puts "#{github && '(gh)' || '    '} #{source} => #{target}"
 end
 
+def xml2md(xml_source, erb_source, target)
+  task = XmlToMd.new(xml_source, erb_source, target)
+  task.run
+  puts "[ #{xml_source}, #{erb_source} ] => #{target}"
+end
+
 ERB2MD_FILES.each do |target|
   file target => "#{target}.erb" do |t|
     erb2md(t.source, t.name, false)
+  end
+end
+
+XML_FILES.each do |(target, (xml_source, erb_source))|
+  file target => [ xml_source, erb_source ] do |t|
+    args = t.sources << t.name
+    xml2md(*args)
   end
 end
 
@@ -26,4 +52,4 @@ GITHUB_FILES.each do |(target, source)|
   end
 end
 
-task default: ERB2MD_FILES + GITHUB_FILES.keys
+task default: ERB2MD_FILES + XML_FILES.keys + GITHUB_FILES.keys
