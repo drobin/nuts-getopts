@@ -1,0 +1,29 @@
+require_relative './erb_to_md'
+
+ERB2MD_FILES = %w(
+  nuts-getopts/index.md
+)
+
+GITHUB_FILES = {
+  "../README.md" => "nuts-getopts/index.md.erb"
+}
+
+def erb2md(source, target, github)
+  task = ErbToMd.new(source, target, github_optimization: github)
+  task.run
+  puts "#{github && '(gh)' || '    '} #{source} => #{target}"
+end
+
+ERB2MD_FILES.each do |target|
+  file target => "#{target}.erb" do |t|
+    erb2md(t.source, t.name, false)
+  end
+end
+
+GITHUB_FILES.each do |(target, source)|
+  file target => source do |t|
+    erb2md(source, target, true)
+  end
+end
+
+task default: ERB2MD_FILES + GITHUB_FILES.keys

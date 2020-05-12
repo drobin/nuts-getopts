@@ -1,0 +1,47 @@
+# nuts-getopts
+
+The nuts-getopts project implements a zero-copy command line parser; no further
+memory allocation is required, no modification of the command line arguments
+are made.
+
+## Getting Started
+
+The following code snippet illustrates the usage of the _nuts-getopts_ parser,
+which is copied from [src/examples/getopts.c]. Further examples are available
+in the [src/examples] directory.
+
+```c
+<%= IO.read(getopts_c).gsub(/^\/\*.*\*\//m, "").strip %>
+
+```
+
+### Prerequisites
+
+No special prerequisites are necessary, a C99 compliant compiler should be sufficient.
+
+### Compiling and installing
+
+[CMake] is used to build the library.
+
+```sh
+mkdir build
+cd build
+cmake ..
+make
+make install
+```
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE] file for details
+
+<% if github %>
+[src/examples/getopts.c]: src/examples/getopts.c
+[src/examples]: src/examples
+[LICENSE]: LICENSE
+<% else %>
+[src/examples/getopts.c]: https://github.com/drobin/nuts-getopts/tree/master/src/examples/getopts.c
+[src/examples]: https://github.com/drobin/nuts-getopts/tree/master/src/examples/getopts.c
+[LICENSE]: https://github.com/drobin/nuts-getopts/blob/master/LICENSE
+<% end %>
+[CMake]: http://www.cmake.org

@@ -122,7 +122,7 @@ make install
 
 This project is licensed under the MIT License - see the [LICENSE] file for details
 
-[src/examples/getopts.c]: src/examples/getopts.c
-[src/examples]: src/examples
-[LICENSE]: LICENSE
+[src/examples/getopts.c]: https://github.com/drobin/nuts-getopts/tree/master/src/examples/getopts.c
+[src/examples]: https://github.com/drobin/nuts-getopts/tree/master/src/examples/getopts.c
+[LICENSE]: https://github.com/drobin/nuts-getopts/blob/master/LICENSE
 [CMake]: http://www.cmake.org
