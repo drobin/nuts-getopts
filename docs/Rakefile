@@ -1,5 +1,4 @@
-require_relative './erb_to_md'
-require_relative './xml_to_md'
+require 'nuts/docs'
 
 PROJECT_ROOT = ENV["PROJECT_ROOT"]
 BUILD_ROOT   = ENV["BUILD_ROOT"]
@@ -13,24 +12,49 @@ ERB2MD_FILES = %w(
   nuts-getopts/index.md
 )
 
-XML_FILES = {
-  "nuts-getopts/api.md" => [ "#{BUILD_ROOT}/docs/xml/group__nuts-getopts.xml", "nuts-getopts/api.md.erb" ]
-}
+XML_FILES = %w(
+  nuts-getopts/api.md
+)
 
 GITHUB_FILES = {
   "#{PROJECT_ROOT}/README.md" => "nuts-getopts/index.md.erb"
 }
 
-def erb2md(source, target, github)
-  task = ErbToMd.new(source, target, github_optimization: github)
-  task.run
-  puts "#{github && '(gh)' || '    '} #{source} => #{target}"
+def mk_erb_context(context, github)
+  src_dir = File.join(PROJECT_ROOT, "src")
+  examples_dir = File.join(src_dir, "examples")
+
+  context[:github] = github
+
+  Dir[File.join(examples_dir, "*.c")].inject(context) do |a, e|
+    key = "#{File.basename(e, ".c")}_c"
+    a[key] = e
+    a
+  end
 end
 
-def xml2md(xml_source, erb_source, target)
-  task = XmlToMd.new(xml_source, erb_source, target)
-  task.run
-  puts "[ #{xml_source}, #{erb_source} ] => #{target}"
+def erb2md(source, target, github)
+  runner = Nuts::Docs::ErbToMd::Runner.new
+  mk_erb_context(runner.context, github)
+
+  input = IO.read(source)
+  output = runner.run(input)
+  IO.write(target, output)
+
+  puts "#{github && '(gh) ' || '     '} #{source} => #{target}"
+end
+
+XML_FILES.each do |target|
+  file target => "#{target}.erb" do |t|
+    xml_path = File.join(BUILD_ROOT, "docs/xml")
+    runner = Nuts::Docs::XmlToMd::Runner.new(xml_path, "nuts-getopts")
+
+    input = IO.read(t.source)
+    output = runner.run(input)
+    IO.write(t.name, output)
+
+    puts "(xml) #{t.source} => #{t.name}"
+  end
 end
 
 ERB2MD_FILES.each do |target|
@@ -39,17 +63,10 @@ ERB2MD_FILES.each do |target|
   end
 end
 
-XML_FILES.each do |(target, (xml_source, erb_source))|
-  file target => [ xml_source, erb_source ] do |t|
-    args = t.sources << t.name
-    xml2md(*args)
-  end
-end
-
 GITHUB_FILES.each do |(target, source)|
   file target => source do |t|
-    erb2md(source, target, true)
+    erb2md(t.source, t.name, true)
   end
 end
 
-task default: ERB2MD_FILES + XML_FILES.keys + GITHUB_FILES.keys
+task default: ERB2MD_FILES + GITHUB_FILES.keys + XML_FILES

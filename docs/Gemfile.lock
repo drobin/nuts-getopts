@@ -1,0 +1,24 @@
+GIT
+  remote: https://github.com/drobin/nuts-docs
+  revision: 9ddaacf370ee03f99dc82d04a5ed016e58ba3c69
+  specs:
+    nuts-docs (0.1.0)
+      nokogiri (~> 1.10.9)
+
+GEM
+  remote: https://rubygems.org/
+  specs:
+    mini_portile2 (2.4.0)
+    nokogiri (1.10.9)
+      mini_portile2 (~> 2.4.0)
+    rake (13.0.1)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  nuts-docs!
+  rake
+
+BUNDLED WITH
+   2.1.4

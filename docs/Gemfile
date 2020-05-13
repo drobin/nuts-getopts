@@ -1,0 +1,4 @@
+source "https://rubygems.org"
+
+gem "rake"
+gem "nuts-docs", git: 'https://github.com/drobin/nuts-docs'
