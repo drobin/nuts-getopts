@@ -20,11 +20,11 @@ GITHUB_FILES = {
   "#{PROJECT_ROOT}/README.md" => "nuts-getopts/index.md.erb"
 }
 
-def mk_erb_context(context, github)
+def erb_context(github)
   src_dir = File.join(PROJECT_ROOT, "src")
   examples_dir = File.join(src_dir, "examples")
 
-  context[:github] = github
+  context = Nuts::Docs::GeneralContext.new(github: github)
 
   Dir[File.join(examples_dir, "*.c")].inject(context) do |a, e|
     key = "#{File.basename(e, ".c")}_c"
@@ -34,8 +34,8 @@ def mk_erb_context(context, github)
 end
 
 def erb2md(source, target, github)
-  runner = Nuts::Docs::ErbToMd::Runner.new
-  mk_erb_context(runner.context, github)
+  runner = Nuts::Docs::Runner.new
+  runner.context = erb_context(github)
 
   input = IO.read(source)
   output = runner.run(input)
@@ -47,7 +47,9 @@ end
 XML_FILES.each do |target|
   file target => "#{target}.erb" do |t|
     xml_path = File.join(BUILD_ROOT, "docs/xml")
-    runner = Nuts::Docs::XmlToMd::Runner.new(xml_path, "nuts-getopts")
+
+    runner = Nuts::Docs::Runner.new
+    runner.context = Nuts::Docs::DoxygenContext.new(xml_path, "nuts-getopts")
 
     input = IO.read(t.source)
     output = runner.run(input)
