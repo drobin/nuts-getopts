@@ -8,22 +8,16 @@ raise "missing BUILD_ROOT" if BUILD_ROOT.nil?
 raise "no such directory: #{PROJECT_ROOT}" unless File.directory?(PROJECT_ROOT)
 raise "no such directory: #{BUILD_ROOT}" unless File.directory?(BUILD_ROOT)
 
-ERB2MD_FILES = %w(
-  nuts-getopts/index.md
-)
+ERB2MD_FILES = %w(index.md)
 
-XML_FILES = %w(
-  nuts-getopts/api.md
-)
+DOXYGEN_FILES = %w(api.md)
 
 GITHUB_FILES = {
-  "#{PROJECT_ROOT}/README.md" => "nuts-getopts/index.md.erb"
+  "#{PROJECT_ROOT}/README.md" => "index.md.erb"
 }
 
 def erb_context(github)
-  src_dir = File.join(PROJECT_ROOT, "src")
-  examples_dir = File.join(src_dir, "examples")
-
+  examples_dir = File.join(PROJECT_ROOT, "examples")
   context = Nuts::Docs::GeneralContext.new(github: github)
 
   Dir[File.join(examples_dir, "*.c")].inject(context) do |a, e|
@@ -44,12 +38,12 @@ def erb2md(source, target, github)
   puts "#{github && '(gh) ' || '     '} #{source} => #{target}"
 end
 
-XML_FILES.each do |target|
+DOXYGEN_FILES.each do |target|
   file target => "#{target}.erb" do |t|
     xml_path = File.join(BUILD_ROOT, "docs/xml")
 
     runner = Nuts::Docs::Runner.new
-    runner.context = Nuts::Docs::DoxygenContext.new(xml_path, "nuts-getopts")
+    runner.context = Nuts::Docs::DoxygenContext.new(xml_path, "nuts-getopts.h")
 
     input = IO.read(t.source)
     output = runner.run(input)
@@ -71,4 +65,4 @@ GITHUB_FILES.each do |(target, source)|
   end
 end
 
-task default: ERB2MD_FILES + GITHUB_FILES.keys + XML_FILES
+task default: ERB2MD_FILES + GITHUB_FILES.keys + DOXYGEN_FILES
