@@ -38,3 +38,4 @@ set(CMAKE_C_FLAGS_DEBUG "-g -O0 -DENABLE_DEBUG")
 include("${PROJECT_SOURCE_DIR}/cmake/doxygen.cmake")
 
 add_subdirectory(src)
+add_subdirectory(examples)

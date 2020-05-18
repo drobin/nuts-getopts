@@ -22,20 +22,22 @@
 # SOFTWARE.
 ##
 
-set(PUBLIC_HEADER nuts-getopts.h)
-
-add_library(nuts-getopts STATIC
-  ${PUBLIC_HEADER}
+add_executable(nuts-getopts-example
   getopts.c
+)
+
+target_link_libraries(nuts-getopts-example
+  nuts-getopts
+)
+
+add_executable(nuts-getopts-group-example
+  getopts_group.c
+)
+
+target_link_libraries(nuts-getopts-group-example
+  nuts-getopts
 )
 
 include_directories(
   ${PROJECT_SOURCE_DIR}/src
 )
-
-install(
-  TARGETS nuts-getopts
-  LIBRARY DESTINATION lib
-)
-
-install(FILES "${PUBLIC_HEADER}" DESTINATION include)
