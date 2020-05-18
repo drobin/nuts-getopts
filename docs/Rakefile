@@ -44,6 +44,11 @@ DOXYGEN_FILES.each do |target|
 
     runner = Nuts::Docs::Runner.new
     runner.context = Nuts::Docs::DoxygenContext.new(xml_path, "nuts-getopts.h")
+    runner.context.typedefs = %w(nuts_getopts_event_type
+                                 nuts_getopts_argument_type
+                                 nuts_getopts_error_type
+                                 nuts_getopts_flags
+                                 nuts_getopts_state)
 
     input = IO.read(t.source)
     output = runner.run(input)

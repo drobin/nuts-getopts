@@ -5,12 +5,12 @@
 #### nuts_getopts_event_type
 
 ```
-enum nuts_getopts_event_type {
+typedef enum {
   nuts_getopts_tool_event,
   nuts_getopts_option_event,
   nuts_getopts_argument_event,
   nuts_getopts_error_event
-};
+} nuts_getopts_event_type;
 ```
 
 Events emitted by nuts-getopts.
@@ -26,10 +26,10 @@ The enumeration defines possible types of an nuts_getopts_error_event.
 #### nuts_getopts_argument_type
 
 ```
-enum nuts_getopts_argument_type {
+typedef enum {
   nuts_getopts_no_argument,
   nuts_getopts_required_argument
-};
+} nuts_getopts_argument_type;
 ```
 
 Argument types supported by an nuts_getopts_option.
@@ -43,11 +43,11 @@ Argument types supported by an nuts_getopts_option.
 #### nuts_getopts_error_type
 
 ```
-enum nuts_getopts_error_type {
+typedef enum {
   nuts_getopts_invalid_option,
   nuts_getopts_missing_value,
   nuts_getopts_needless_value
-};
+} nuts_getopts_error_type;
 ```
 
 Error types supported by nuts-getopts.
@@ -62,9 +62,9 @@ If the type of an event is nuts_getopts_error_event, then one of the following e
 #### nuts_getopts_flags
 
 ```
-enum nuts_getopts_flags {
+typedef enum {
   nuts_getopts_ignore_unknown_options
-};
+} nuts_getopts_flags;
 ```
 
 Flags which can be passed to nuts_getopts() resp.

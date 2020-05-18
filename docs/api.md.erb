@@ -5,11 +5,19 @@
 
 #### <%= enum.name %>
 
+<% if enum.typedef? %>
+```
+typedef enum {
+  <%= enum.enumvalue.map(&:name).join(",\n  ") %>
+} <%= enum.name %>;
+```
+<% else %>
 ```
 enum <%= enum.name %> {
   <%= enum.enumvalue.map(&:name).join(",\n  ") %>
 };
 ```
+<% end %>
 
 <%= enum.briefdescription %>
 
